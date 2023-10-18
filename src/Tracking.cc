@@ -1611,6 +1611,13 @@ std::vector<std::vector<int> > Tracking::DynObjTracking()
     return ObjIdNew;
 }
 
+/**
+ * @brief
+ *
+ * @param MatchId
+ * @param MatchId_sub
+ * @return cv::Mat
+ */
 cv::Mat Tracking::GetInitModelCam(const std::vector<int> &MatchId, std::vector<int> &MatchId_sub)
 {
     cv::Mat Mod = cv::Mat::eye(4,4,CV_32F);
@@ -1651,6 +1658,7 @@ cv::Mat Tracking::GetInitModelCam(const std::vector<int> &MatchId, std::vector<i
     // solve
     int iter_num = 500;
     double reprojectionError = 0.4, confidence = 0.98; // 0.5 0.3
+    // 从3D-2D关系到位姿
     cv::solvePnPRansac(pre_3d, cur_2d, camera_mat, distCoeffs, Rvec, Tvec, false,
                iter_num, reprojectionError, confidence, inliers, cv::SOLVEPNP_AP3P); // AP3P EPNP P3P ITERATIVE DLS
 
