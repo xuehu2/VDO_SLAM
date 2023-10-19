@@ -146,7 +146,18 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
+/**
+ * @brief
+ *
+ * @param strPathToSequence 数据集的地址
+ * @param vstrFilenamesSEM semantic文件夹中的数据读进来存的变量
+ * @param vstrFilenamesRGB rgb文件夹中的数据读进来存的变量
+ * @param vstrFilenamesDEP depth文件夹中的数据读进来存的变量
+ * @param vstrFilenamesFLO flow文件夹中的数据读进来存的变量
+ * @param vTimestamps 时间戳
+ * @param vPoseGT 真实相机位姿
+ * @param vObjPoseGT 真实物体位姿
+ */
 void LoadData(const string &strPathToSequence, vector<string> &vstrFilenamesSEM,
               vector<string> &vstrFilenamesRGB,vector<string> &vstrFilenamesDEP, vector<string> &vstrFilenamesFLO,
               vector<double> &vTimestamps, vector<cv::Mat> &vPoseGT, vector<vector<float> > &vObjPoseGT)
@@ -250,6 +261,12 @@ void LoadData(const string &strPathToSequence, vector<string> &vstrFilenamesSEM,
 
 }
 
+/**
+ * @brief 生成语义分割图
+ *
+ * @param strFilenamesMask
+ * @param imMask
+ */
 void LoadMask(const string &strFilenamesMask, cv::Mat &imMask)
 {
     ifstream file_mask;

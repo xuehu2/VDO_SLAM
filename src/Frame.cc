@@ -57,7 +57,22 @@ Frame::Frame(const Frame &frame)
         SetPose(frame.mTcw);
 }
 
-
+/**
+ * @brief Construct a new Frame:: Frame object 构造函数
+ *
+ * @param imGray 灰度图
+ * @param imDepth 深度图
+ * @param imFlow 光流图
+ * @param maskSEM 语义分割图
+ * @param timeStamp 时间戳
+ * @param extractor
+ * @param K 内参
+ * @param distCoef
+ * @param bf 基线长度
+ * @param thDepth 深度阈值
+ * @param thDepthObj 深度阈值
+ * @param UseSampleFea
+ */
 Frame::Frame(const cv::Mat &imGray, const cv::Mat &imDepth, const cv::Mat &imFlow, const cv::Mat &maskSEM,
     const double &timeStamp, ORBextractor* extractor,cv::Mat &K, cv::Mat &distCoef, const float &bf, const float &thDepth, const float &thDepthObj, const int &UseSampleFea)
     :mpORBextractorLeft(extractor),mpORBextractorRight(static_cast<ORBextractor*>(NULL)),

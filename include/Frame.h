@@ -29,19 +29,25 @@ public:
     Frame();
 
     // Copy constructor.
+    // 拷贝构造函数
     Frame(const Frame &frame);
 
     // Constructor for RGB-D cameras.
+    // rgb-d相机的构造函数
     Frame(const cv::Mat &imGray, const cv::Mat &imDepth, const cv::Mat &imFlow, const cv::Mat &maskSEM, const double &timeStamp, ORBextractor* extractor,
           cv::Mat &K, cv::Mat &distCoef, const float &bf, const float &thDepth, const float &thDepthObj, const int &UseSampleFea);
 
     // Extract ORB on the image. 0 for left image and 1 for right image.
+    //提取ORB特征点，flag区分左右图
     void ExtractORB(int flag, const cv::Mat &im);
 
     // Set the camera pose.
+    // 设置相机的位姿
     void SetPose(cv::Mat Tcw);
 
-    // Computes rotation, translation and camera center matrices from the camera pose.
+    // Computes rotation, translation and camera center matrices from the camera
+    // pose.
+    //计算位姿估计相关的矩阵（旋转矩阵、平移向量
     void UpdatePoseMatrices();
 
     // Returns the camera center.
@@ -57,12 +63,14 @@ public:
     // Compute the cell of a keypoint (return false if outside the grid)
     bool PosInGrid(const cv::KeyPoint &kp, int &posX, int &posY);
 
+    //?函数功能未知，获取特征点
     vector<size_t> GetFeaturesInArea(const float &x, const float  &y, const float  &r, const int minLevel=-1, const int maxLevel=-1) const;
 
     // Associate a "right" coordinate to a keypoint if there is valid depth in the depthmap.
     void ComputeStereoFromRGBD(const cv::Mat &imDepth);
 
-    // Backprojects a keypoint (if stereo/depth info available) into 3D world coordinates.
+    // Backprojects a keypoint (if stereo/depth info available) into 3D world
+    // coordinates. 反投影像素点到三维点
     cv::Mat UnprojectStereo(const int &i);
     cv::Mat UnprojectStereoStat(const int &i, const bool &addnoise);
     cv::Mat UnprojectStereoObject(const int &i, const bool &addnoise);
@@ -92,12 +100,15 @@ public:
     cv::Mat mDistCoef;
 
     // Stereo baseline multiplied by fx.
+    // 基线长度用fx定义的
     float mbf;
 
     // Stereo baseline in meters.
+    // 基线长度，单位 米
     float mb;
 
     // Threshold close/far points.
+    // 远近点的判断阈值
     float mThDepth;
     float mThDepthObj;
 
