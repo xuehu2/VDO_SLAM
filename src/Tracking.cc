@@ -170,7 +170,7 @@ Tracking::Tracking(System *pSys, Map *pMap, const string &strSettingPath,
  * @param imFlow 光流图
  * @param maskSEM 语义分割图
  * @param mTcw_gt 相机真实位姿
- * @param vObjPose_gt 物体真实位姿
+ * @param vObjPose_gt 当前帧中跟踪到的目标物体的真实位姿
  * @param timestamp 时间戳
  * @param imTraj 最终的显示效果图? //TODO
  * @param nImage 获取停止的帧的数量
@@ -241,7 +241,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   all_timing.resize(5, 0);
 
   // (new added Nov 21 2019)
-  // 初始化成功以后，更新mask信息
+  // 初始化成功以后，更新mask信息，第一帧不会调用
   if (mState != NO_IMAGES_YET) {
     clock_t s_0, e_0;
     double mask_upd_time;
@@ -263,7 +263,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   // +++++++++++++++++++++++++ For sampled features
   // ++++++++++++++++++++++++++++++++++++++++
   // ---------------------------------------------------------------------------------------
-
+  // 第一帧不会进入
   if (mState != NO_IMAGES_YET) {
     cout << "Update Current Frame From Last....." << endl;
 
@@ -325,7 +325,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   // ---------------------------------------------------------------------------------------
   // ---------------------------------------------------------------------------------------
 
-  // Assign pose ground truth
+  // Assign pose ground truth  设定位姿真值，设置世界原点
   if (mState == NO_IMAGES_YET) {
     mCurrentFrame.mTcw_gt = Converter::toInvMatrix(mTcw_gt);
     mOriginInv = mTcw_gt;
@@ -352,13 +352,13 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   mCurrentFrame.vObjLabel.resize(mCurrentFrame.mvObjKeys.size(), -2);
 
   //todo  在此之前，得到的信息包括哪些，我们的方法需要得到哪些信息？
-  // *** main *** 主方法  
+  // *** main *** 主方法
   cout << "Start Tracking ......" << endl;
   Track();  //跟踪函数，计算相机的位姿
   cout << "End Tracking ......" << endl;
   // ************
 
-  // Update Global ID
+  // Update Global ID   更新跟踪的全局id
   f_id = f_id + 1;
 
   // ---------------------------------------------------------------------------------------------
@@ -366,7 +366,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   // ++++++++++++++++++++++++++++++++++++++++
   // ---------------------------------------------------------------------------------------------
 
-  // // // ************** display label on the image ***************  // //
+  // ************** display label on the image ***************  // 如果是帧到帧的跟踪方式，在图上显示标签信息
   if (timestamp != 0 && bFrame2Frame == true) {
     std::vector<cv::KeyPoint> KeyPoints_tmp(1);
     // background features
@@ -392,7 +392,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
       cv::drawKeypoints(imRGB, KeyPoints_tmp, imRGB, cv::Scalar(0, 0, 0),
                         1); // red
     }
-    // static and dynamic objects
+    // static and dynamic objects 检查当前帧所跟踪到的对象标签，如果标签等于-1和-2跳过，标签值大于25，取1/2。
     for (int i = 0; i < mCurrentFrame.vObjLabel.size(); ++i) {
       if (mCurrentFrame.vObjLabel[i] == -1 || mCurrentFrame.vObjLabel[i] == -2)
         continue;
@@ -527,7 +527,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   }
 
   // ************** show bounding box with speed ***************
-  // ************** 显示带有速度的边界框            ***************
+  // ************** 显示带有速度的边界框           ***************
   if (timestamp != 0 && bFrame2Frame == true && mTestData == KITTI) {
     cv::Mat mImBGR(mImGray.size(), CV_8UC3);
     cvtColor(mImGray, mImBGR, CV_GRAY2RGB);
@@ -557,7 +557,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
     cv::waitKey(1);
   }
 
-  // // ************** show trajectory results ***************
+  // ************** show trajectory results ***************
   if (mTestData == KITTI) {
     int sta_x = 300, sta_y = 100, radi = 1, thic = 2; // (160/120/2/5)
     float scale = 6;                                  // 6
@@ -656,7 +656,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
                     mpMap->vmRigidMotion_GT, mpMap->vbObjStat);
   }
 
-  // // // ************** display temperal matching ***************
+  // ************** display temperal matching ***************
   // if(timestamp!=0 && bFrame2Frame == true)
   // {
   //     std::vector<cv::KeyPoint> PreKeys, CurKeys;
@@ -2275,6 +2275,13 @@ cv::Mat Tracking::ObjPoseParsingKT(const std::vector<float> &vObjPose_gt) {
   return Pose;
 }
 
+/**
+ * @brief 将vObjPose_gt = [0 1 -0.778713066 0.183287918 2.070737279 0.153768414 -0.104345249 0.998078694]
+ * 所表示的位姿转换为T变换矩阵的行驶
+ * 
+ * @param vObjPose_gt 例：[0 1 -0.778713066 0.183287918 2.070737279 0.153768414 -0.104345249 0.998078694]
+ * @return cv::Mat 
+ */
 cv::Mat Tracking::ObjPoseParsingOX(const std::vector<float> &vObjPose_gt) {
   // assign t vector
   cv::Mat t(3, 1, CV_32FC1);

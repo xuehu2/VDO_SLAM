@@ -150,7 +150,7 @@ public:
     cv::Mat mDepthMap;
     cv::Mat mSegMap, mSegMapLast;
 
-    // transfer the ground truth to use identity matrix as origin
+    // transfer the ground truth to use identity matrix as origin 原点
     cv::Mat mOriginInv;
 
     // 判断是初始帧还是跟踪过程中的帧到帧
