@@ -153,9 +153,11 @@ public:
     // transfer the ground truth to use identity matrix as origin
     cv::Mat mOriginInv;
 
-    // Store temperal matching feature index
+    // 判断是初始帧还是跟踪过程中的帧到帧
     bool bFrame2Frame,bFirstFrame;  // ++++++ new added
+    // Store temperal matching feature index  存储临时的匹配特征索引
     std::vector<int> TemperalMatch, TemperalMatch_subset;  // ++++++ new added
+    // 前一帧的特征点，当前帧的特征点
     std::vector<cv::KeyPoint> mvKeysLastFrame, mvKeysCurrentFrame;  // ++++++ new added
 
     std::vector<cv::KeyPoint> mvTmpObjKeys;
@@ -164,16 +166,16 @@ public:
     std::vector<cv::Point2f> mvTmpObjFlowNext;
     std::vector<cv::KeyPoint> mvTmpObjCorres;
 
-    // re-projection error
+    // re-projection error   重投影误差
     std::vector<float> repro_e;
 
-    // save current frame ID
+    // save current frame ID    保存当前帧的id
     int f_id;
 
-    // save the global Tracking ID
+    // save the global Tracking ID    保存全局跟踪id
     int max_id;
 
-    // save stop frame
+    // save stop frame   保存停止帧的id
     int StopFrame;
 
     // save optimization decision

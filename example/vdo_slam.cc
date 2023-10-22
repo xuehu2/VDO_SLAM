@@ -19,7 +19,7 @@
 #include<System.h>
 
 using namespace std;
-// 加载数据集
+// 读取数据集中的所有数据
 void LoadData(const string &strPathToSequence, vector<string> &vstrFilenamesSEM,
               vector<string> &vstrFilenamesRGB, vector<string> &vstrFilenamesDEP, vector<string> &vstrFilenamesFLO,
               vector<double> &vTimestamps, vector<cv::Mat> &vPoseGT, vector<vector<float> > &vObjPoseGT);
@@ -37,16 +37,17 @@ int main(int argc, char **argv)
     // Retrieve paths to images
     vector<string> vstrFilenamesRGB;// 左图
     vector<string> vstrFilenamesDEP;// 右图
-    vector<string> vstrFilenamesSEM;
-    vector<string> vstrFilenamesFLO;
-    std::vector<cv::Mat> vPoseGT;
-    vector<vector<float> > vObjPoseGT;
-    vector<double> vTimestamps;
+    vector<string> vstrFilenamesSEM;// 语义分割结果
+    vector<string> vstrFilenamesFLO;// 场景流结果
+    std::vector<cv::Mat> vPoseGT; // 相机真实轨迹
+    vector<vector<float> > vObjPoseGT; // 物体真实轨迹
+    vector<double> vTimestamps; // 时间戳
 
     LoadData(argv[2], vstrFilenamesSEM, vstrFilenamesRGB, vstrFilenamesDEP, vstrFilenamesFLO,
                   vTimestamps, vPoseGT, vObjPoseGT);
 
-    // save the id of object pose in each frame
+    // save the id of object pose in each frame 
+    // 保存每帧图像中的物体的位姿
     vector<vector<int> > vObjPoseID(vstrFilenamesRGB.size());
     for (int i = 0; i < vObjPoseGT.size(); ++i)
     {
@@ -81,7 +82,7 @@ int main(int argc, char **argv)
     }
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    VDO_SLAM::System SLAM(argv[1],VDO_SLAM::System::RGBD);
+    VDO_SLAM::System SLAM(argv[1],VDO_SLAM::System::RGBD);// 初始化SLAM类
 
     cout << endl << "--------------------------------------------------------------------------" << endl;
     cout << "Start processing sequence ..." << endl;
@@ -106,25 +107,25 @@ int main(int argc, char **argv)
         imD   = cv::imread(vstrFilenamesDEP[ni],CV_LOAD_IMAGE_UNCHANGED);
         cv::Mat imD_f, imD_r;
 
-        // // For stereo disparity input
+        // For stereo disparity input转换为双目图像输入需要的格式
         imD.convertTo(imD_f, CV_32F);
 
         // // For monocular depth input
         // cv::resize(imD, imD_r, cv::Size(1242,375));
         // imD_r.convertTo(imD_f, CV_32F);
 
-        // Load flow matrix
+        // Load flow matrix 读取光流文件
         cv::Mat imFlow = cv::optflow::readOpticalFlow(vstrFilenamesFLO[ni]);
         // FlowShow(imFlow);
 
-        // Load semantic mask
+        // Load semantic mask加载语义掩码
         cv::Mat imSem(imRGB.rows, imRGB.cols, CV_32SC1);
         LoadMask(vstrFilenamesSEM[ni],imSem);
 
         double tframe = vTimestamps[ni];
-        mTcw_gt = vPoseGT[ni];
+        mTcw_gt = vPoseGT[ni]; //真实位姿
 
-        // Object poses in current frame
+        // Object poses in current frame当前帧中的物体姿态
         vector<vector<float> > vObjPose_gt(vObjPoseID[ni].size());
         for (int i = 0; i < vObjPoseID[ni].size(); ++i)
             vObjPose_gt[i] = vObjPoseGT[vObjPoseID[ni][i]];
