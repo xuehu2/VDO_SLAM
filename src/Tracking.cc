@@ -170,7 +170,7 @@ Tracking::Tracking(System *pSys, Map *pMap, const string &strSettingPath,
  * @param imFlow 光流图
  * @param maskSEM 语义分割图
  * @param mTcw_gt 相机真实位姿
- * @param vObjPose_gt 物体真实位姿
+ * @param vObjPose_gt 当前帧中跟踪到的目标物体的真实位姿
  * @param timestamp 时间戳
  * @param imTraj 最终的显示效果图? //TODO
  * @param nImage 获取停止的帧的数量
@@ -187,7 +187,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   bJoint = true;
   cv::RNG rng((unsigned)time(NULL));
 
-  // Initialize Global ID
+  // Initialize Global ID初始化全局 ID
   if (mState == NO_IMAGES_YET)
     f_id = 0;
 
@@ -241,7 +241,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   all_timing.resize(5, 0);
 
   // (new added Nov 21 2019)
-  //初始化成功以后
+  // 初始化成功以后，更新mask信息，第一帧不会调用
   if (mState != NO_IMAGES_YET) {
     clock_t s_0, e_0;
     double mask_upd_time;
@@ -263,7 +263,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   // +++++++++++++++++++++++++ For sampled features
   // ++++++++++++++++++++++++++++++++++++++++
   // ---------------------------------------------------------------------------------------
-
+  // 第一帧不会进入
   if (mState != NO_IMAGES_YET) {
     cout << "Update Current Frame From Last....." << endl;
 
@@ -325,7 +325,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   // ---------------------------------------------------------------------------------------
   // ---------------------------------------------------------------------------------------
 
-  // // Assign pose ground truth
+  // Assign pose ground truth  设定位姿真值，设置世界原点
   if (mState == NO_IMAGES_YET) {
     mCurrentFrame.mTcw_gt = Converter::toInvMatrix(mTcw_gt);
     mOriginInv = mTcw_gt;
@@ -351,13 +351,14 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   // Initialize object label
   mCurrentFrame.vObjLabel.resize(mCurrentFrame.mvObjKeys.size(), -2);
 
+  //todo  在此之前，得到的信息包括哪些，我们的方法需要得到哪些信息？
   // *** main *** 主方法
   cout << "Start Tracking ......" << endl;
   Track();  //跟踪函数，计算相机的位姿
   cout << "End Tracking ......" << endl;
   // ************
 
-  // Update Global ID
+  // Update Global ID   更新跟踪的全局id
   f_id = f_id + 1;
 
   // ---------------------------------------------------------------------------------------------
@@ -365,7 +366,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   // ++++++++++++++++++++++++++++++++++++++++
   // ---------------------------------------------------------------------------------------------
 
-  // // // ************** display label on the image ***************  // //
+  // ************** display label on the image ***************  // 如果是帧到帧的跟踪方式，在图上显示标签信息
   if (timestamp != 0 && bFrame2Frame == true) {
     std::vector<cv::KeyPoint> KeyPoints_tmp(1);
     // background features
@@ -391,7 +392,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
       cv::drawKeypoints(imRGB, KeyPoints_tmp, imRGB, cv::Scalar(0, 0, 0),
                         1); // red
     }
-    // static and dynamic objects
+    // static and dynamic objects 检查当前帧所跟踪到的对象标签，如果标签等于-1和-2跳过，标签值大于25，取1/2。
     for (int i = 0; i < mCurrentFrame.vObjLabel.size(); ++i) {
       if (mCurrentFrame.vObjLabel[i] == -1 || mCurrentFrame.vObjLabel[i] == -2)
         continue;
@@ -526,7 +527,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   }
 
   // ************** show bounding box with speed ***************
-  // ************** 显示带有速度的边界框            ***************
+  // ************** 显示带有速度的边界框           ***************
   if (timestamp != 0 && bFrame2Frame == true && mTestData == KITTI) {
     cv::Mat mImBGR(mImGray.size(), CV_8UC3);
     cvtColor(mImGray, mImBGR, CV_GRAY2RGB);
@@ -556,7 +557,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
     cv::waitKey(1);
   }
 
-  // // ************** show trajectory results ***************
+  // ************** show trajectory results ***************
   if (mTestData == KITTI) {
     int sta_x = 300, sta_y = 100, radi = 1, thic = 2; // (160/120/2/5)
     float scale = 6;                                  // 6
@@ -655,7 +656,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
                     mpMap->vmRigidMotion_GT, mpMap->vbObjStat);
   }
 
-  // // // ************** display temperal matching ***************
+  // ************** display temperal matching ***************
   // if(timestamp!=0 && bFrame2Frame == true)
   // {
   //     std::vector<cv::KeyPoint> PreKeys, CurKeys;
@@ -702,6 +703,12 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   return mCurrentFrame.mTcw.clone();
 }
 
+/**
+ * @brief 跟踪 
+ * 分为初始化和跟踪，初始化和orbslam没差异
+ * 跟踪过程为：
+ * 
+ */
 void Tracking::Track() {
   // 没有图像输入代表还没有进行初始化步骤
   if (mState == NO_IMAGES_YET)
@@ -711,7 +718,7 @@ void Tracking::Track() {
   mLastProcessedState = mState;
   //如果没有初始化
   if (mState == NOT_INITIALIZED) {
-    // 第一帧
+    // 第一帧，不是帧到帧
     bFirstFrame = true;
     bFrame2Frame = false;
 
@@ -720,15 +727,16 @@ void Tracking::Track() {
 
     if (mState != OK)
       return;
-  } else //!初始化好了，一般从第二帧开始进入这个里面
+  } else //! 初始化好了，一般从第二帧开始进入这个里面
   {
-    bFrame2Frame = true;
+    // 帧到帧
+    bFrame2Frame = true; 
 
     cout << "--------------------------------------------" << endl;
     cout << "..........Dealing with Camera Pose.........." << endl;
     cout << "--------------------------------------------" << endl;
 
-    // // *********** Update TemperalMatch ***********
+    // *********** Update TemperalMatch ***********
     for (int i = 0; i < mCurrentFrame.N_s; ++i) {
       TemperalMatch[i] = i;
     }
@@ -1474,7 +1482,7 @@ void Tracking::GetSceneFlowObj() {
 }
 
 /**
- * @brief 
+ * @brief 动态物体跟踪
  * 
  * @return std::vector<std::vector<int>> 
  */
@@ -1483,7 +1491,7 @@ std::vector<std::vector<int>> Tracking::DynObjTracking() {
   double obj_tra_time;
   s_2 = clock();
 
-  // Find the unique labels in semantic label
+  // Find the unique labels in semantic label 在语义标签中查找唯一标签
   auto UniLab = mCurrentFrame.vSemObjLabel;
   std::sort(UniLab.begin(), UniLab.end());
   UniLab.erase(std::unique(UniLab.begin(), UniLab.end()), UniLab.end());
@@ -1493,7 +1501,7 @@ std::vector<std::vector<int>> Tracking::DynObjTracking() {
     cout << UniLab[i] << " ";
   cout << endl;
 
-  // Collect the predicted labels and semantic labels in vector
+  // Collect the predicted labels and semantic labels in vector 在向量中收集预测标签和语义标签
   std::vector<std::vector<int>> Posi(UniLab.size());
   for (int i = 0; i < mCurrentFrame.vSemObjLabel.size(); ++i) {
     // skip outliers
@@ -1509,16 +1517,16 @@ std::vector<std::vector<int>> Tracking::DynObjTracking() {
     }
   }
 
-  // // Save objects only from Posi() -> ObjId()
+  // Save objects only from Posi() -> ObjId()
   std::vector<std::vector<int>> ObjId;
-  std::vector<int> sem_posi; // semantic label position for the objects
+  std::vector<int> sem_posi; // semantic label position for the objects 对象的语义标签位置
   int shrin_thr_row = 0, shrin_thr_col = 0;
   if (mTestData == KITTI) {
     shrin_thr_row = 25;
     shrin_thr_col = 50;
   }
   for (int i = 0; i < Posi.size(); ++i) {
-    // shrink the image to get rid of object parts on the boundary
+    // shrink the image to get rid of object parts on the boundary 缩小图像，去除边界上的对象部分
     float count = 0, count_thres = 0.5;
     for (int j = 0; j < Posi[i].size(); ++j) {
       const float u = mCurrentFrame.mvObjKeys[Posi[i][j]].pt.x;
@@ -1539,7 +1547,7 @@ std::vector<std::vector<int>> Tracking::DynObjTracking() {
     }
   }
 
-  // // Check scene flow distribution of each object and keep the dynamic object
+  // Check scene flow distribution of each object and keep the dynamic object 检查每个对象的场景流分布，保留动态对象
   std::vector<std::vector<int>> ObjIdNew;
   std::vector<int> SemPosNew, obj_dis_tres(sem_posi.size(), 0);
   for (int i = 0; i < ObjId.size(); ++i) {
@@ -1637,13 +1645,13 @@ std::vector<std::vector<int>> Tracking::DynObjTracking() {
   //     Background", mImGray); cv::waitKey(0);
   // }
 
-  // Relabel the objects that associate with the objects in last frame
+  // Relabel the objects that associate with the objects in last frame 重新标记与上一帧中的对象相关联的对象
 
-  // initialize global object id
+  // initialize global object id 初始化全局对象 ID
   if (f_id == 1)
     max_id = 1;
 
-  // save current label id
+  // save current label id 保存当前标签id
   std::vector<int> LabId(ObjIdNew.size());
   for (int i = 0; i < ObjIdNew.size(); ++i) {
     // save semantic labels in last frame
@@ -1690,7 +1698,7 @@ std::vector<std::vector<int>> Tracking::DynObjTracking() {
     }
   }
 
-  // // assign the model label in current frame
+  // assign the model label in current frame 为当前帧指定模型标签
   mCurrentFrame.nModLabel = LabId;
   mCurrentFrame.nSemPosition = SemPosNew;
 
@@ -2267,6 +2275,13 @@ cv::Mat Tracking::ObjPoseParsingKT(const std::vector<float> &vObjPose_gt) {
   return Pose;
 }
 
+/**
+ * @brief 将vObjPose_gt = [0 1 -0.778713066 0.183287918 2.070737279 0.153768414 -0.104345249 0.998078694]
+ * 所表示的位姿转换为T变换矩阵的行驶
+ * 
+ * @param vObjPose_gt 例：[0 1 -0.778713066 0.183287918 2.070737279 0.153768414 -0.104345249 0.998078694]
+ * @return cv::Mat 
+ */
 cv::Mat Tracking::ObjPoseParsingOX(const std::vector<float> &vObjPose_gt) {
   // assign t vector
   cv::Mat t(3, 1, CV_32FC1);

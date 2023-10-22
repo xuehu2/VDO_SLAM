@@ -112,38 +112,39 @@ public:
     float mThDepth;
     float mThDepthObj;
 
-    // Number of KeyPoints.
+    // Number of KeyPoints.  特征点的总数
     int N;
 
     // Vector of keypoints (original for visualization) and undistorted (actually used by the system).
     // In the stereo case, mvKeysUn is redundant as images must be rectified.
     // In the RGB-D case, RGB images can be distorted.
-    std::vector<cv::KeyPoint> mvKeys, mvKeysRight;
-    std::vector<cv::KeyPoint> mvKeysUn;
+    std::vector<cv::KeyPoint> mvKeys, mvKeysRight;  // 左右图的特征点
+    std::vector<cv::KeyPoint> mvKeysUn;             // 畸变矫正后的特征点
 
-    // Corresponding stereo coordinate and depth for each keypoint.
+    // Corresponding stereo coordinate and depth for each keypoint.  
+    // 每个关键点对应的立体坐标和深度。
     // "Monocular" keypoints have a negative value.
     std::vector<float> mvuRight;
     std::vector<float> mvDepth;
 
-    // ORB descriptor, each row associated to a keypoint.
+    // ORB descriptor, each row associated to a keypoint.   ORB 描述符，每一行与一个关键点相关。
     cv::Mat mDescriptors, mDescriptorsRight;
 
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    // Number of KeyPoints.
+    // Number of KeyPoints.   特征点总数
     int N_s;
 
     // Store keypoints and descriptors
     std::vector<cv::KeyPoint> mvStatKeys, mvStatKeysRight;
 
     // Store dense key points and depths on objects
-    std::vector<cv::KeyPoint> mvObjKeys;
-    std::vector<float> mvObjDepth;
-    std::vector<cv::Mat> mvObj3DPoint;
+    std::vector<cv::KeyPoint> mvObjKeys; // 动态目标上的特征点
+    std::vector<float> mvObjDepth;       // 动态目标特征点的深度值
+    std::vector<cv::Mat> mvObj3DPoint;   // 动态目标的特征点对应三维点的三维坐标
     // Correspondence for the objects
-    std::vector<cv::KeyPoint> mvObjCorres;
+    std::vector<cv::KeyPoint> mvObjCorres; // 
     // Optical flow for the objects
     std::vector<cv::Point2f> mvObjFlowGT, mvObjFlowNext;
     // semantic object label of all the foreground features
@@ -198,10 +199,10 @@ public:
 
     // **************** Ground Truth *********************
 
-    std::vector<cv::Mat> vObjPose_gt;
-    std::vector<int> nSemPosi_gt;
-    std::vector<cv::Mat> vObjMod_gt;
-    std::vector<float> vObjSpeed_gt;
+    std::vector<cv::Mat> vObjPose_gt; // 目标位姿真值
+    std::vector<int> nSemPosi_gt;     // 位置真值
+    std::vector<cv::Mat> vObjMod_gt;  // 
+    std::vector<float> vObjSpeed_gt;  // 目标速度真值
 
     cv::Mat mTcw_gt;
     std::vector<int> vObjLabel_gt; // 0(background), 1...n(instance label)

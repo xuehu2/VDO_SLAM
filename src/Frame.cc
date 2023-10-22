@@ -65,7 +65,7 @@ Frame::Frame(const Frame &frame)
  * @param imFlow 光流图
  * @param maskSEM 语义分割图
  * @param timeStamp 时间戳
- * @param extractor
+ * @param extractor 特征点提取器
  * @param K 内参
  * @param distCoef
  * @param bf 基线长度
@@ -101,8 +101,8 @@ Frame::Frame(const cv::Mat &imGray, const cv::Mat &imDepth, const cv::Mat &imFlo
     // clock_t s_1, e_1;
     // double fea_det_time;
     // s_1 = clock();
-    // ORB extraction
-    ExtractORB(0,imGray);
+    // ORB extraction 提取ORB特征点
+    ExtractORB(0,imGray); //提取左图特征点
     // e_1 = clock();
     // fea_det_time = (double)(e_1-s_1)/CLOCKS_PER_SEC*1000;
     // cout << "feature detection time: " << fea_det_time << endl;
