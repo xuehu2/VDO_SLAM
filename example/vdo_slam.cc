@@ -19,11 +19,11 @@
 #include<System.h>
 
 using namespace std;
-
+// 加载数据集
 void LoadData(const string &strPathToSequence, vector<string> &vstrFilenamesSEM,
               vector<string> &vstrFilenamesRGB, vector<string> &vstrFilenamesDEP, vector<string> &vstrFilenamesFLO,
               vector<double> &vTimestamps, vector<cv::Mat> &vPoseGT, vector<vector<float> > &vObjPoseGT);
-
+// 加载mask掩膜
 void LoadMask(const string &strFilenamesMask, cv::Mat &imMask);
 
 int main(int argc, char **argv)
@@ -35,8 +35,8 @@ int main(int argc, char **argv)
     }
 
     // Retrieve paths to images
-    vector<string> vstrFilenamesRGB;
-    vector<string> vstrFilenamesDEP;
+    vector<string> vstrFilenamesRGB;// 左图
+    vector<string> vstrFilenamesDEP;// 右图
     vector<string> vstrFilenamesSEM;
     vector<string> vstrFilenamesFLO;
     std::vector<cv::Mat> vPoseGT;

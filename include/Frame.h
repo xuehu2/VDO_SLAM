@@ -38,7 +38,7 @@ public:
           cv::Mat &K, cv::Mat &distCoef, const float &bf, const float &thDepth, const float &thDepthObj, const int &UseSampleFea);
 
     // Extract ORB on the image. 0 for left image and 1 for right image.
-    //提取ORB特征点，flag区分左右图
+    // 提取ORB特征点，flag区分左右图
     void ExtractORB(int flag, const cv::Mat &im);
 
     // Set the camera pose.
@@ -47,15 +47,15 @@ public:
 
     // Computes rotation, translation and camera center matrices from the camera
     // pose.
-    //计算位姿估计相关的矩阵（旋转矩阵、平移向量
+    // 计算位姿估计相关的矩阵（旋转矩阵、平移向量
     void UpdatePoseMatrices();
 
-    // Returns the camera center.
+    // Returns the camera center. 相机中心
     inline cv::Mat GetCameraCenter(){
         return mOw.clone();
     }
 
-    // Returns inverse of rotation
+    // Returns inverse of rotation Rwc
     inline cv::Mat GetRotationInverse(){
         return mRwc.clone();
     }
