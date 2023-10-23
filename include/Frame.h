@@ -137,7 +137,7 @@ public:
     int N_s;
 
     // Store keypoints and descriptors
-    std::vector<cv::KeyPoint> mvStatKeys, mvStatKeysRight;///当前帧中的关键点，但这些点是由上一帧的关键点通过上一帧的光流信息追踪得到的匹配点
+    std::vector<cv::KeyPoint> mvStatKeys, mvStatKeysRight;//当前帧中的关键点，但这些点是由上一帧的关键点通过上一帧的光流信息追踪得到的匹配点
 
     // Store dense key points and depths on objects
     std::vector<cv::KeyPoint> mvObjKeys; // 动态目标上的特征点
@@ -151,12 +151,12 @@ public:
     std::vector<int> vSemObjLabel;
 
     // temporal saved
-    std::vector<cv::KeyPoint> mvStatKeysTmp;   ///当前帧通过特征提取或随机采样得到的特征点
+    std::vector<cv::KeyPoint> mvStatKeysTmp;   //当前帧通过特征提取或随机采样得到的特征点
     std::vector<float> mvStatDepthTmp;
     std::vector<cv::Mat> mvStat3DPointTmp;
     std::vector<int> vSemLabelTmp;
     std::vector<int> vObjLabel_gtTmp;
-    int N_s_tmp; /// 随机采样得到的关键点数量
+    int N_s_tmp; // 随机采样得到的关键点数量
 
 
 
@@ -166,14 +166,14 @@ public:
 
 
     // depth for each keypoint
-    std::vector<float> mvStatDepth;  /// 根据光流计算的关键点的深度
+    std::vector<float> mvStatDepth;  // 根据光流计算的关键点的深度
 
     // Store the Label Index for each features: -1(outlier/unknown), 0(static), 1...n(object label).
-    std::vector<int> vObjLabel;   /// 存每个关键点的标签-1 outlier，  0静态   ，1...n 动态
+    std::vector<int> vObjLabel;   // 存每个关键点的标签-1 outlier，  0静态   ，1...n 动态
 
     // Store the 3D flow vector and the 2D re-projection error vector
-    std::vector<cv::Point3f> vFlow_3d;  ///当前帧的每个关键点场景流向量 
-    std::vector<cv::Point2f> vFlow_2d;  ///
+    std::vector<cv::Point3f> vFlow_3d;  //当前帧的每个关键点场景流向量
+    std::vector<cv::Point2f> vFlow_2d;  //
 
     // Store the motion of objects
     std::vector<cv::Mat> vObjMod;
