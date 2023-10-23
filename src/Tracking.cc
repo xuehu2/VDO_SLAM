@@ -314,7 +314,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
     }
 
     // **********************************************************
-    // // show image
+    // show image
     // cv::Mat img_show;
     // cv::drawKeypoints(mImGray, mCurrentFrame.mvObjKeys, img_show,
     // cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT); cv::imshow("Dense
@@ -741,12 +741,11 @@ void Tracking::Track() {
     bFrame2Frame = false;
 
     if (mSensor == System::RGBD)
-      Initialization(); //!初始化
+      Initialization(); //! 初始化
 
     if (mState != OK)
       return;
-  } else //! 初始化好了，一般从第二帧开始进入这个里面
-  {
+  } else { //! 初始化好了，一般从第二帧开始进入这个里面
     // 帧到帧
     bFrame2Frame = true; 
 
@@ -758,22 +757,23 @@ void Tracking::Track() {
     for (int i = 0; i < mCurrentFrame.N_s; ++i) {
       TemperalMatch[i] = i;
     }
-    // // ********************************************
+    // ********************************************
 
     clock_t s_1_1, s_1_2, e_1_1, e_1_2;
     double cam_pos_time;
     s_1_1 = clock();
     // Get initial estimate using P3P plus RanSac
-    // 采用恒速度模型（这里理解为变换矩阵与上一帧相同）和PNP求解两种方式计算变换矩阵，并采用内点较多的那一种模型
+    // 采用恒速度模型和PNP求解两种方式计算当前帧的位姿，并采用内点较多的方式得到的位姿
     cv::Mat iniTcw = GetInitModelCam(TemperalMatch, TemperalMatch_subset);
     e_1_1 = clock();
 
     s_1_2 = clock();
     // cout << "the ground truth pose: " << endl << mCurrentFrame.mTcw_gt <<
     // endl; cout << "initial pose: " << endl << iniTcw << endl;
-    // // compute the pose with new matching
-    mCurrentFrame.SetPose(iniTcw); //!设置初值
-    if (bJoint)
+    // compute the pose with new matching
+    mCurrentFrame.SetPose(iniTcw); //! 设置当前帧的位姿
+    if (bJoint)  // 预先设定为True
+    // 优化位姿，还是基于静态假设的优化。
       Optimizer::PoseOptimizationFlow2Cam(&mCurrentFrame, &mLastFrame,
                                           TemperalMatch_subset);
     else
@@ -792,7 +792,7 @@ void Tracking::Track() {
       mLastFrame.GetRotationInverse().copyTo(
           LastTwc.rowRange(0, 3).colRange(0, 3));// 获取上一帧的位姿的旋转矩阵
       mLastFrame.GetCameraCenter().copyTo(LastTwc.rowRange(0, 3).col(3)); // 获取相机中心
-      mVelocity = mCurrentFrame.mTcw * LastTwc; // 速度=当前帧的位姿×上一帧的位姿
+      mVelocity = mCurrentFrame.mTcw * LastTwc; // 速度=当前帧的位姿×上一帧的位姿的逆
     }
 
     // ----------- compute camera pose error ----------
@@ -840,14 +840,12 @@ void Tracking::Track() {
     cout << "..........Dealing with Objects Now.........." << endl;
     cout << "--------------------------------------------" << endl;
 
-    // // ====== compute sparse scene flow to the found matches =======
+    // ====== compute sparse scene flow to the found matches =======
     GetSceneFlowObj();
 
     // //
     // ---------------------------------------------------------------------------------------
-    // // ++++++++++++++++++++++++++++++++ Dynamic Object Tracking
-    // ++++++++++++++++++++++++++++++
-    // //
+    // ++++++++++++++++++++++++++++++++ Dynamic Object Tracking
     // ---------------------------------------------------------------------------------------
 
     cout << "Object Tracking ......" << endl;
@@ -1343,6 +1341,51 @@ void Tracking::Track() {
   mState = OK;
 }
 
+
+
+/**
+ * @brief 新的跟踪方法，目的是得到相机的位姿
+ * 具体流程：
+ * 1. 获取当前帧的特征点和其对应的3d路标点
+ * 2. 根据物体类别的速度和变换矩阵反推特征点和3d路标点
+ * 3. 做优化得到相机位姿
+ */
+void Tracking::TrackBack(){
+  if(mState == NO_IMAGES_YET)
+    mState = NOT_INITIALIZED;
+  mLastProcessedState = mState;
+  if (mState == NOT_INITIALIZED) {
+    // 1帧
+    bFirstFrame = true;
+    bFrame2Frame = false;
+    if (mSensor == System::RGBD)
+      Initialization(); //!初始化
+    if (mState != OK)
+      return;
+  } else {
+    // 2-n帧
+    bFrame2Frame=true;
+    cout << "---算相机位姿---"<<endl;
+    cout << ""
+    for (int i=0;i< mCurrentFrame.N_s;i++){
+      ;//todo
+    }
+    vector<cv::Mat> objVelocitiesLast; // 保存每个关键点在上一时刻的变换关系
+
+
+
+    //跟踪得到当前帧的位姿后，更新以下变量
+    vector<cv::Mat> objVelocitiesCurr;  // 更新当前帧的像素点的运动（速度）
+
+
+  }
+
+  // 局部ba
+
+
+  // 全局ba
+
+}
 void Tracking::Initialization() {
   cout << "Initialization ......" << endl;
 
@@ -1412,26 +1455,30 @@ void Tracking::Initialization() {
   cout << "Initialization, Done!" << endl;
 }
 
+/**
+ * @brief 计算稀疏的场景流
+ * 
+ */
 void Tracking::GetSceneFlowObj() {
-  // // Threshold // //
+  // Threshold // //
   // int max_dist = 90, max_lat = 30;
   // double fps = 10, max_velocity_ms = 40;
   // double max_depth = 30;
 
-  // Initialization
+  // Initialization 初始化
   int N = mCurrentFrame.mvObjKeys.size();
   mCurrentFrame.vFlow_3d.resize(N);
   // mCurrentFrame.vFlow_2d.resize(N);
 
   std::vector<Eigen::Vector3d> pts_p3d(N, Eigen::Vector3d(-1, -1, -1)),
       pts_vel(N, Eigen::Vector3d(-1, -1, -1));
-
+  // 相机的旋转和平移
   const cv::Mat Rcw = mCurrentFrame.mTcw.rowRange(0, 3).colRange(0, 3);
   const cv::Mat tcw = mCurrentFrame.mTcw.rowRange(0, 3).col(3);
 
   // Main loop
   for (int i = 0; i < N; ++i) {
-    // // filter
+    // filter
     // if(mCurrentFrame.mvObjDepth[i]>max_depth  ||
     // mLastFrame.mvObjDepth[i]>max_depth)
     // {
@@ -1740,7 +1787,7 @@ std::vector<std::vector<int>> Tracking::DynObjTracking() {
  */
 cv::Mat Tracking::GetInitModelCam(const std::vector<int> &MatchId,
                                   std::vector<int> &MatchId_sub) {
-  cv::Mat Mod = cv::Mat::eye(4, 4, CV_32F);
+  cv::Mat Mod = cv::Mat::eye(4, 4, CV_32F);  // 返回指定大小的单位阵
   int N = MatchId.size();
 
   // construct input
@@ -1760,7 +1807,7 @@ cv::Mat Tracking::GetInitModelCam(const std::vector<int> &MatchId,
   }
 
   // camera matrix & distortion coefficients
-  cv::Mat camera_mat(3, 3, CV_64FC1);
+  cv::Mat camera_mat(3, 3, CV_64FC1); // 内参
   cv::Mat distCoeffs = cv::Mat::zeros(1, 4, CV_64FC1);
   camera_mat.at<double>(0, 0) = mK.at<float>(0, 0);
   camera_mat.at<double>(1, 1) = mK.at<float>(1, 1);
@@ -1769,9 +1816,9 @@ cv::Mat Tracking::GetInitModelCam(const std::vector<int> &MatchId,
   camera_mat.at<double>(2, 2) = 1.0;
 
   // output
-  cv::Mat Rvec(3, 1, CV_64FC1);
-  cv::Mat Tvec(3, 1, CV_64FC1);
-  cv::Mat d(3, 3, CV_64FC1);
+  cv::Mat Rvec(3, 1, CV_64FC1); //旋转向量
+  cv::Mat Tvec(3, 1, CV_64FC1); //平移向量
+  cv::Mat d(3, 3, CV_64FC1); //旋转矩阵
   cv::Mat inliers;
 
   // solve
@@ -1781,7 +1828,7 @@ cv::Mat Tracking::GetInitModelCam(const std::vector<int> &MatchId,
                      iter_num, reprojectionError, confidence, inliers,
                      cv::SOLVEPNP_AP3P); // AP3P EPNP P3P ITERATIVE DLS
 
-  cv::Rodrigues(Rvec, d);
+  cv::Rodrigues(Rvec, d); //旋转向量 to 旋转矩阵
 
   // assign the result to current pose
   Mod.at<float>(0, 0) = d.at<double>(0, 0);
@@ -1797,9 +1844,9 @@ cv::Mat Tracking::GetInitModelCam(const std::vector<int> &MatchId,
   Mod.at<float>(2, 2) = d.at<double>(2, 2);
   Mod.at<float>(2, 3) = Tvec.at<double>(2, 0);
 
-  // calculate the re-projection error
+  // calculate the re-projection error 计算重投影误差
   std::vector<int> MM_inlier;
-  cv::Mat MotionModel;
+  cv::Mat MotionModel; //运动模型得到的位姿
   if (mVelocity.empty())
     MotionModel = cv::Mat::eye(4, 4, CV_32F) * mLastFrame.mTcw;
   else
@@ -1827,7 +1874,7 @@ cv::Mat Tracking::GetInitModelCam(const std::vector<int> &MatchId,
   // (2)Motion Model: " << MM_inlier.size() << endl;
 
   cv::Mat output;
-
+  // 对比哪种方法的inlier多，输出inlier多的方法得到的结果
   if (inliers.rows > MM_inlier.size()) {
     // save the inliers IDs
     output = Mod;

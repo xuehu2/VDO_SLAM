@@ -194,10 +194,10 @@ public:
     float fSFMgThres, fSFDsThres;
 
     // save timing values
-    std::vector<float> all_timing;
+    std::vector<float> all_timing; // 计时器
 
     // use sampled feature or detected feature for background
-    int nUseSampleFea;
+    int nUseSampleFea; // 是否使用采样的关键点
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -205,40 +205,42 @@ protected:
 
     // Main tracking function. It is independent of the input sensor.
     void Track();
+    // 跟踪的新方法
+    void TrackBack();
 
-    // Map initialization
+    // 初始化
     void Initialization();
 
-    //ORB
+    //ORB特征提取器
     ORBextractor* mpORBextractorLeft, *mpORBextractorRight;
 
     // System
     System* mpSystem;
 
-    //Map
+    // 地图
     Map* mpMap;
 
-    //Calibration matrix
+    //Calibration matrix 标定的内参矩阵
     cv::Mat mK;
     cv::Mat mDistCoef;
     float mbf;
 
     // Threshold close/far points
     // Points seen as close by the stereo/RGBD sensor are considered reliable
-    float mThDepth;
-    float mThDepthObj;
+    float mThDepth; // 近远点判断阈值
+    float mThDepthObj;  // 物体的近远点判断阈值
 
     // The depth map scale factor.
-    float mDepthMapFactor;
+    float mDepthMapFactor;  //深度的尺度因子
 
     //Current matches in frame
-    int mnMatchesInliers;
+    int mnMatchesInliers;  // 当前的匹配内点
 
     //Last Frame Info
-    Frame mLastFrame;
+    Frame mLastFrame;  // 前1帧
 
-    //Motion Model
-    cv::Mat mVelocity;
+    //Motion Model 运动模型
+    cv::Mat mVelocity;  // 帧间的变换(速度)
 
     //Color order (true RGB, false BGR, ignored if grayscale)
     bool mbRGB;

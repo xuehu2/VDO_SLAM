@@ -161,19 +161,19 @@ public:
 
 
     // save the object status (false for outlier, true for inlier)  # added 10 Jan 2020 #
-    std::vector<bool> bObjStat;
+    std::vector<bool> bObjStat; /// 目标状态
 
 
 
     // depth for each keypoint
-    std::vector<float> mvStatDepth;
+    std::vector<float> mvStatDepth;  /// 根据光流计算的关键点的深度
 
     // Store the Label Index for each features: -1(outlier/unknown), 0(static), 1...n(object label).
-    std::vector<int> vObjLabel;
+    std::vector<int> vObjLabel;   /// 存每个关键点的标签-1 outlier，  0静态   ，1...n 动态
 
     // Store the 3D flow vector and the 2D re-projection error vector
-    std::vector<cv::Point3f> vFlow_3d;
-    std::vector<cv::Point2f> vFlow_2d;
+    std::vector<cv::Point3f> vFlow_3d;  ///当前帧的每个关键点场景流向量 
+    std::vector<cv::Point2f> vFlow_2d;  ///
 
     // Store the motion of objects
     std::vector<cv::Mat> vObjMod;
@@ -223,7 +223,7 @@ public:
     static float mfGridElementHeightInv;
     std::vector<std::size_t> mGrid[FRAME_GRID_COLS][FRAME_GRID_ROWS];
 
-    // Camera pose.
+    // Camera pose. 相机位姿
     cv::Mat mTcw;
 
     // Current and Next Frame id.
