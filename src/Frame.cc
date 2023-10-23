@@ -187,10 +187,10 @@ namespace VDO_SLAM {
         // cv::imshow("KeyPoints on Background", img_show);
         // cv::waitKey(0);
 
-        N_s_tmp = mvCorres.size();
+        N_s_tmp = mvCorres.size(); //检测到的关键点数量
         // cout << "number of random sample points: " << mvCorres.size() << endl;
 
-        /// assign the depth value to each keypoint 算每个特征点的深度
+        /// assign the depth value to each keypoint 算每个关键点的深度
         mvStatDepthTmp = vector<float>(N_s_tmp, -1);
         for (int i = 0; i < N_s_tmp; i++) {
             const cv::KeyPoint &kp = mvStatKeysTmp[i];
@@ -238,9 +238,9 @@ namespace VDO_SLAM {
 
         // ---------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------
-
+        // rgbd输入进行去畸变
         UndistortKeyPoints();
-
+        // 关联双目图像输入的右侧坐标
         ComputeStereoFromRGBD(imDepth);
 
         // This is done only for the first Frame (or after a change in the calibration)
@@ -267,7 +267,9 @@ namespace VDO_SLAM {
         cout << "Constructing Frame, Done!" << endl;
     }
 
-
+    /**
+     *
+     */
     void Frame::AssignFeaturesToGrid() {
         int nReserve = 0.5f * N / (FRAME_GRID_COLS * FRAME_GRID_ROWS);
         for (unsigned int i = 0; i < FRAME_GRID_COLS; i++)

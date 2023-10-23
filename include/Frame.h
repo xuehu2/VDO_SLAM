@@ -137,18 +137,28 @@ public:
     int N_s;
 
     // Store keypoints and descriptors
-    std::vector<cv::KeyPoint> mvStatKeys, mvStatKeysRight;//静态特征点
+    std::vector<cv::KeyPoint> mvStatKeys, mvStatKeysRight;///当前帧中的关键点，但这些点是由上一帧的关键点通过上一帧的光流信息追踪得到的匹配点
 
     // Store dense key points and depths on objects
     std::vector<cv::KeyPoint> mvObjKeys; // 动态目标上的特征点
     std::vector<float> mvObjDepth;       // 动态目标特征点的深度值
     std::vector<cv::Mat> mvObj3DPoint;   // 动态目标的特征点对应三维点的三维坐标
     // Correspondence for the objects
-    std::vector<cv::KeyPoint> mvObjCorres; // 
+    std::vector<cv::KeyPoint> mvObjCorres; // 目标上的关键点根据光流计算得到的下一帧的关键点信息
     // Optical flow for the objects
     std::vector<cv::Point2f> mvObjFlowGT, mvObjFlowNext;
     // semantic object label of all the foreground features
     std::vector<int> vSemObjLabel;
+
+    // temporal saved
+    std::vector<cv::KeyPoint> mvStatKeysTmp;   ///当前帧通过特征提取或随机采样得到的特征点
+    std::vector<float> mvStatDepthTmp;
+    std::vector<cv::Mat> mvStat3DPointTmp;
+    std::vector<int> vSemLabelTmp;
+    std::vector<int> vObjLabel_gtTmp;
+    int N_s_tmp; /// 随机采样得到的关键点数量
+
+
 
     // save the object status (false for outlier, true for inlier)  # added 10 Jan 2020 #
     std::vector<bool> bObjStat;
@@ -180,17 +190,11 @@ public:
     // for initializing motion
     cv::Mat mInitModel;
 
-    std::vector<cv::KeyPoint> mvCorres; // correspondence
+    std::vector<cv::KeyPoint> mvCorres; // correspondence  已知当前帧中的关键点和光流信息，可以算出下一帧中的匹配点坐标
     std::vector<cv::Point2f> mvFlow,mvFlowNext; // optical flow
     // std::vector<int> vCorSta; // the status of correspondence, -1 (outliers) 1 (has correspondence)
 
-    // temporal saved
-    std::vector<cv::KeyPoint> mvStatKeysTmp;
-    std::vector<float> mvStatDepthTmp;
-    std::vector<cv::Mat> mvStat3DPointTmp;
-    std::vector<int> vSemLabelTmp;
-    std::vector<int> vObjLabel_gtTmp;
-    int N_s_tmp; // todo 什么的数量
+
 
     // inlier ID generated in this frame  (new added Nov 14 2019)
     std::vector<int> nStaInlierID;
