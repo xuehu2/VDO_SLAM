@@ -218,7 +218,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
   cv::Mat imDepth = imD;
 
   // Transfer color image to grey image
-  // !转灰度图
+  //! 转灰度图
   if (mImGray.channels() == 3) {
     if (mbRGB)
       cvtColor(mImGray, mImGray, CV_RGB2GRAY);
@@ -247,7 +247,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
     double mask_upd_time;
     s_0 = clock();
     //! ****** Update Mask information *******
-    UpdateMask();
+    UpdateMask(); // 更新mask信息
     e_0 = clock();
     mask_upd_time = (double)(e_0 - s_0) / CLOCKS_PER_SEC * 1000;
     all_timing[0] = mask_upd_time;
@@ -707,7 +707,25 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD,
  * @brief 跟踪 
  * 分为初始化和跟踪，初始化和orbslam没差异
  * 跟踪过程为：
- * 
+ * 第一步：如有必要，进行初始化。注意这里的背景点和object特征点构造的3D点会存入不同的容器。
+ * 第二步：先对相机位姿进行处理，利用的是前后帧的匹配信息
+       1) 使用P3P+RANSAC方法和匀速运动模型分别求解相机初始位姿，最后哪种方法的内点数更多就取哪个的结果
+       2) 在初始估计的基础上再进行位姿优化，这里有类似ORBSLAM中的优化，还有结合了光流的位姿优化这两种供选择
+       3) 按照匀速运动模型，更新速度信息
+       ( 4)根据传入的相机位姿gt值，来计算相对平移误差和相对旋转误差 )
+   第三步：处理object
+			1) 对特征点计算稀疏的场景流 Tracking::GetSceneFlowObj()。场景流可以作为判断动态object的依据。
+			   当前帧的场景流=当前帧的特征点世界坐标-前一帧对应特征点世界坐标
+			2) 对物体进行追踪，即找到前后帧两个物体的对应关系 Tracking::DynObjTracking()
+			3) 对物体进行运动估计。这里起其实就是先根据物体前后帧的3D-2D匹配求出一个T，再用上之前求的相机位姿，
+			   最终求得物体在世界坐标系下前后帧的变换T。
+    第四步：更新变量Tracking::RenewFrameInfo()，类似操作分别对静态点和动态物体点进行
+        1) 保存上一帧的关键点的内点，并用光流计算在下一帧中的位置，
+        2) 对于每一个Obj，如果目前已追踪的特征点达不到固定值，就从当前帧提取的orb特征点中/采样点中才提取，直到足够数量
+        3) 此步骤仅对于动态物体：更新新出现的物体，找到新出现的label，并把新物体上的关键点加入变量
+        4) 给每一个关键点存储对应的深度值，在已知关键点像素坐标，深度，相机pose的情况下，求出当前帧关键点对应的世界坐标
+    第五步：局部优化
+    第六步：全局优化
  */
 void Tracking::Track() {
   // 没有图像输入代表还没有进行初始化步骤

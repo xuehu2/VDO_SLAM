@@ -137,7 +137,7 @@ public:
     int N_s;
 
     // Store keypoints and descriptors
-    std::vector<cv::KeyPoint> mvStatKeys, mvStatKeysRight;
+    std::vector<cv::KeyPoint> mvStatKeys, mvStatKeysRight;//静态特征点
 
     // Store dense key points and depths on objects
     std::vector<cv::KeyPoint> mvObjKeys; // 动态目标上的特征点
@@ -190,7 +190,7 @@ public:
     std::vector<cv::Mat> mvStat3DPointTmp;
     std::vector<int> vSemLabelTmp;
     std::vector<int> vObjLabel_gtTmp;
-    int N_s_tmp;
+    int N_s_tmp; // todo 什么的数量
 
     // inlier ID generated in this frame  (new added Nov 14 2019)
     std::vector<int> nStaInlierID;
