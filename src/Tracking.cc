@@ -254,7 +254,7 @@ namespace VDO_SLAM {
             // cout << "mask updating time: " << mask_upd_time << endl;
         }
 
-        //! 构造当前帧
+        //! 构造当前帧，提取当前帧的关键点
         mCurrentFrame =
                 Frame(mImGray, imDepth, imFlow, maskSEM, timestamp, mpORBextractorLeft,
                       mK, mDistCoef, mbf, mThDepth, mThDepthObj, nUseSampleFea);
@@ -359,7 +359,7 @@ namespace VDO_SLAM {
          * */
         // *** main *** 主方法
         cout << "Start Tracking ......" << endl;
-        Track();  //跟踪函数，计算相机的位姿
+        TrackBack();  //跟踪函数，计算相机的位姿
         cout << "End Tracking ........" << endl;
         // ************
 
@@ -1391,6 +1391,32 @@ namespace VDO_SLAM {
 
     }
 
+    /**
+     * 新的初始化方法
+     */
+    void Tracking::InitializationBack() {
+        cout << "InitializationBack......" << endl;
+        {
+
+            // static
+            std::vector<cv::Mat> mv3DPointTmp;
+            for (int i = 0; i < mCurrentFrame.mvStatKeysTmp.size(); ++i) {
+                mv3DPointTmp.push_back(Optimizer::Get3DinCamera(
+                        mCurrentFrame.mvStatKeysTmp[i], mCurrentFrame.mvStatDepthTmp[i], mK));
+            }
+            mCurrentFrame.mvStat3DPointTmp = mv3DPointTmp;
+            // dynamic
+            std::vector<cv::Mat> mvObj3DPointTmp;
+            for (int i = 0; i < mCurrentFrame.mvObjKeys.size(); ++i) {
+                mvObj3DPointTmp.push_back(Optimizer::Get3DinCamera(
+                        mCurrentFrame.mvObjKeys[i], mCurrentFrame.mvObjDepth[i], mK));
+            }
+            mCurrentFrame.mvObj3DPoint = mvObj3DPointTmp;
+            cout << "静态点数量:" << mv3DPointTmp.size() << "\t静态点数量:" << mvObj3DPointTmp.size() << endl;
+        }
+
+    }
+
     void Tracking::Initialization() {
         cout << "Initialization ......" << endl;
 
@@ -1562,7 +1588,7 @@ namespace VDO_SLAM {
         s_2 = clock();
 
         // Find the unique labels in semantic label 在语义标签中查找唯一标签
-        auto UniLab = mCurrentFrame.vSemObjLabel;
+        vector<int> UniLab = mCurrentFrame.vSemObjLabel;
         std::sort(UniLab.begin(), UniLab.end());
         UniLab.erase(std::unique(UniLab.begin(), UniLab.end()), UniLab.end());
 
@@ -3149,7 +3175,7 @@ namespace VDO_SLAM {
 
         // (3) Update new appearing objects
         // (3.1) find the unique labels in semantic label
-        auto UniLab = mvTmpSemObjLabel;
+        vector<int> UniLab = mvTmpSemObjLabel;
         std::sort(UniLab.begin(), UniLab.end());
         UniLab.erase(std::unique(UniLab.begin(), UniLab.end()), UniLab.end());
         // (3.2) find new appearing label
@@ -3213,7 +3239,7 @@ namespace VDO_SLAM {
         cout << "Update Mask ......" << endl;
 
         // find the unique labels in semantic label
-        auto UniLab = mLastFrame.vSemObjLabel;
+        vector<int> UniLab = mLastFrame.vSemObjLabel;
         std::sort(UniLab.begin(), UniLab.end());
         UniLab.erase(std::unique(UniLab.begin(), UniLab.end()), UniLab.end());
 

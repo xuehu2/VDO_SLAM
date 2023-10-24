@@ -224,6 +224,9 @@ namespace VDO_SLAM {
         // 初始化
         void Initialization();
 
+        // 新的初始化方法
+        void InitializationBack();
+
         //ORB特征提取器
         ORBextractor *mpORBextractorLeft, *mpORBextractorRight;
 

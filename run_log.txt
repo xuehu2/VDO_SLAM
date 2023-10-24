@@ -1,0 +1,571 @@
+ ----------------------------------------------------------------------------
+| VDO-SLAM Copyright (C) 2019-2020 Jun Zhang, Australian National University.|
+| This program comes with ABSOLUTELY NO WARRANTY;                            |
+| This is free software, and you are welcome to redistribute it              |
+| under certain conditions; See LICENSE.txt.                                 |
+ ----------------------------------------------------------------------------
+
+Camera Parameters:
+
+- fx: 618.359
+- fy: 618.592
+- cx: 328.987
+- cy: 237.751
+- fps: 30
+- color order: RGB (ignored if grayscale)
+
+System Parameters:
+
+- tested dataset: OMD
+- depth threshold (background/object): 40/25
+- depth map factor: 1000
+- max tracking points: (1) background: 1200 (2) object: 800
+- scene flow paras: (1) magnitude: 0.02 (2) percentage: 0.99
+- local batch paras: (1) window: 20 (2) overlap: 4
+- used sampled feature for background scene...
+
+--------------------------------------------------------------------------
+Start processing sequence ...
+Images in the sequence: 50
+
+
+=======================================================
+Processing Frame: 0
+Start Constructing Frame......
+feature detection time: 0.178
+Constructing Frame, Done!
+Start Tracking ......
+Initialization ......
+Initialization, Done!
+End Tracking ........
+
+=======================================================
+Processing Frame: 1
+Update Mask ......
+Update Mask, Done!
+Start Constructing Frame......
+feature detection time: 0.19
+Constructing Frame, Done!
+Update Current Frame From Last.....
+Update Current Frame, Done!
+Start Tracking ......
+--------------------------------------------
+..........Dealing with Camera Pose..........
+--------------------------------------------
+
+(Camera) inliers number/total numbers: 1053/1053
+the relative pose error of estimated camera pose, t: 0.012603 R: 0.301316
+--------------------------------------------
+..........Dealing with Objects Now..........
+..........     处理目标的跟踪        ..........
+--------------------------------------------
+Object Tracking ......
+Unique Semantic Label: 0 1 2 3 4
+Current Max_id: (5) motion label: 1 2 3 4 Object Tracking, Done!
+
+Processing Object No.[1]:
+it is 1!
+it is 1!
+
+(Object) inliers number/total numbers: 547/547
+estimated and ground truth object speed: 0.646491km/h 1.039214km/h
+the relative pose error of the object, t: 0.026129 R: 0.979587
+
+Processing Object No.[2]:
+it is 2!
+it is 2!
+
+(Object) inliers number/total numbers: 658/658
+estimated and ground truth object speed: 0.496535km/h 0.488886km/h
+the relative pose error of the object, t: 0.028807 R: 1.520070
+
+Processing Object No.[3]:
+it is 3!
+it is 3!
+
+(Object) inliers number/total numbers: 407/407
+estimated and ground truth object speed: 0.987055km/h 5.043217km/h
+the relative pose error of the object, t: 0.024597 R: 2.807841
+
+Processing Object No.[4]:
+it is 4!
+it is 4!
+
+(Object) inliers number/total numbers: 386/386
+estimated and ground truth object speed: 0.126601km/h 1.105057km/h
+the relative pose error of the object, t: 0.005727 R: 1.788160
+
+Start Renew Frame Information......
+Renew Frame Info, Done!
+map updating time: 6.316250
+Assign To Lastframe ......
+Assign To Lastframe, Done!
+Save Graph Structure ......
+
+==============================================
+the number of static feature tracklets: 1020
+==============================================
+
+Length over 5 (STATIC):::::::::::::::: 0
+
+==============================================
+the number of dynamic feature tracklets: 1997
+==============================================
+
+Length over 5 (DYNAMIC):::::::::::::::: 0
+Save Graph Structure, Done!
+End Tracking ........
+=================================================
+CAMERA:
+average error (Camera): t: 0.012648 R: 0.301316
+OBJECTS:
+average error (Over All Objects): t: 0.023186 R: 1.894181
+=================================================
+
+=======================================================
+Processing Frame: 2
+Update Mask ......
+Update Mask, Done!
+Start Constructing Frame......
+feature detection time: 0.344000
+Constructing Frame, Done!
+Update Current Frame From Last.....
+Update Current Frame, Done!
+Start Tracking ......
+--------------------------------------------
+..........Dealing with Camera Pose..........
+--------------------------------------------
+
+(Camera) inliers number/total numbers: 1070/1070
+the relative pose error of estimated camera pose, t: 0.008235 R: 0.222056
+--------------------------------------------
+..........Dealing with Objects Now..........
+..........     处理目标的跟踪        ..........
+--------------------------------------------
+Object Tracking ......
+Unique Semantic Label: 0 1 2 3 4
+Current Max_id: (5) motion label: 1 2 3 4 Object Tracking, Done!
+
+Processing Object No.[1]:
+it is 1!
+it is 1!
+
+(Object) inliers number/total numbers: 674/674
+estimated and ground truth object speed: 0.537580km/h 1.009034km/h
+the relative pose error of the object, t: 0.024512 R: 0.888234
+
+Processing Object No.[2]:
+it is 2!
+it is 2!
+
+(Object) inliers number/total numbers: 690/690
+estimated and ground truth object speed: 0.414749km/h 0.431414km/h
+the relative pose error of the object, t: 0.021067 R: 1.300858
+
+Processing Object No.[3]:
+it is 3!
+it is 3!
+
+(Object) inliers number/total numbers: 582/582
+estimated and ground truth object speed: 1.056978km/h 4.581970km/h
+the relative pose error of the object, t: 0.030530 R: 3.072178
+
+Processing Object No.[4]:
+it is 4!
+it is 4!
+
+(Object) inliers number/total numbers: 583/583
+estimated and ground truth object speed: 0.549237km/h 1.026945km/h
+the relative pose error of the object, t: 0.025557 R: 1.546616
+
+Start Renew Frame Information......
+Renew Frame Info, Done!
+map updating time: 6.472500
+Assign To Lastframe ......
+Assign To Lastframe, Done!
+Save Graph Structure ......
+
+==============================================
+the number of static feature tracklets: 1119
+==============================================
+
+Length over 5 (STATIC):::::::::::::::: 0
+
+==============================================
+the number of dynamic feature tracklets: 2866
+==============================================
+
+Length over 5 (DYNAMIC):::::::::::::::: 0
+Save Graph Structure, Done!
+End Tracking ........
+=================================================
+CAMERA:
+average error (Camera): t: 0.010675 R: 0.263930
+OBJECTS:
+average error (Over All Objects): t: 0.024444 R: 1.892854
+=================================================
+
+=======================================================
+Processing Frame: 3
+Update Mask ......
+Update Mask, Done!
+Start Constructing Frame......
+feature detection time: 0.488000
+Constructing Frame, Done!
+Update Current Frame From Last.....
+Update Current Frame, Done!
+Start Tracking ......
+--------------------------------------------
+..........Dealing with Camera Pose..........
+--------------------------------------------
+
+(Camera) inliers number/total numbers: 1106/1106
+the relative pose error of estimated camera pose, t: 0.007075 R: 0.179137
+--------------------------------------------
+..........Dealing with Objects Now..........
+..........     处理目标的跟踪        ..........
+--------------------------------------------
+Object Tracking ......
+Unique Semantic Label: 0 1 2 3 4
+Current Max_id: (5) motion label: 1 2 3 4 Object Tracking, Done!
+
+Processing Object No.[1]:
+it is 1!
+it is 1!
+
+(Object) inliers number/total numbers: 724/724
+estimated and ground truth object speed: 0.698868km/h 1.134218km/h
+the relative pose error of the object, t: 0.026522 R: 0.953676
+
+Processing Object No.[2]:
+it is 2!
+it is 2!
+
+(Object) inliers number/total numbers: 728/728
+estimated and ground truth object speed: 0.390900km/h 0.334735km/h
+the relative pose error of the object, t: 0.019648 R: 1.437766
+
+Processing Object No.[3]:
+it is 3!
+it is 3!
+
+(Object) inliers number/total numbers: 558/558
+estimated and ground truth object speed: 1.137518km/h 4.590256km/h
+the relative pose error of the object, t: 0.017998 R: 2.870172
+
+Processing Object No.[4]:
+it is 4!
+it is 4!
+
+(Object) inliers number/total numbers: 685/685
+estimated and ground truth object speed: 0.252148km/h 1.005252km/h
+the relative pose error of the object, t: 0.020159 R: 1.543576
+
+Start Renew Frame Information......
+Renew Frame Info, Done!
+map updating time: 5.711500
+Assign To Lastframe ......
+Assign To Lastframe, Done!
+Save Graph Structure ......
+
+==============================================
+the number of static feature tracklets: 1256
+==============================================
+
+Length over 5 (STATIC):::::::::::::::: 0
+
+==============================================
+the number of dynamic feature tracklets: 3338
+==============================================
+
+Length over 5 (DYNAMIC):::::::::::::::: 0
+Save Graph Structure, Done!
+End Tracking ........
+=================================================
+CAMERA:
+average error (Camera): t: 0.009632 R: 0.238485
+OBJECTS:
+average error (Over All Objects): t: 0.023452 R: 1.876619
+
+average error of Object 1:  t: 0.025736 R: 0.941284
+
+average error of Object 2:  t: 0.023521 R: 1.422441
+
+average error of Object 3:  t: 0.024906 R: 2.918911
+
+average error of Object 4:  t: 0.019082 R: 1.630150
+=================================================
+
+=======================================================
+Processing Frame: 4
+Update Mask ......
+Update Mask, Done!
+Start Constructing Frame......
+feature detection time: 0.341000
+Constructing Frame, Done!
+Update Current Frame From Last.....
+Update Current Frame, Done!
+Start Tracking ......
+--------------------------------------------
+..........Dealing with Camera Pose..........
+--------------------------------------------
+
+(Camera) inliers number/total numbers: 1043/1043
+the relative pose error of estimated camera pose, t: 0.006252 R: 0.320206
+--------------------------------------------
+..........Dealing with Objects Now..........
+..........     处理目标的跟踪        ..........
+--------------------------------------------
+Object Tracking ......
+Unique Semantic Label: 0 1 2 3 4
+Current Max_id: (5) motion label: 1 2 3 4 Object Tracking, Done!
+
+Processing Object No.[1]:
+it is 1!
+it is 1!
+
+(Object) inliers number/total numbers: 664/664
+estimated and ground truth object speed: 0.990404km/h 1.523438km/h
+the relative pose error of the object, t: 0.034001 R: 1.460185
+
+Processing Object No.[2]:
+it is 2!
+it is 2!
+
+(Object) inliers number/total numbers: 664/664
+estimated and ground truth object speed: 0.304623km/h 0.385314km/h
+the relative pose error of the object, t: 0.017994 R: 1.668357
+
+Processing Object No.[3]:
+it is 3!
+it is 3!
+
+(Object) inliers number/total numbers: 701/701
+estimated and ground truth object speed: 1.180789km/h 5.197504km/h
+the relative pose error of the object, t: 0.028127 R: 3.241115
+
+Processing Object No.[4]:
+it is 4!
+it is 4!
+
+(Object) inliers number/total numbers: 695/695
+estimated and ground truth object speed: 0.181868km/h 1.027359km/h
+the relative pose error of the object, t: 0.019425 R: 1.745179
+
+Start Renew Frame Information......
+Renew Frame Info, Done!
+map updating time: 6.052500
+Assign To Lastframe ......
+Assign To Lastframe, Done!
+Save Graph Structure ......
+
+==============================================
+the number of static feature tracklets: 1338
+==============================================
+
+Length over 5 (STATIC):::::::::::::::: 765
+
+==============================================
+the number of dynamic feature tracklets: 3699
+==============================================
+
+Length over 5 (DYNAMIC):::::::::::::::: 1317
+Save Graph Structure, Done!
+End Tracking ........
+=================================================
+CAMERA:
+average error (Camera): t: 0.008935 R: 0.261696
+OBJECTS:
+average error (Over All Objects): t: 0.024042 R: 1.948179
+
+average error of Object 1:  t: 0.028031 R: 1.094325
+
+average error of Object 2:  t: 0.022268 R: 1.487736
+
+average error of Object 3:  t: 0.025749 R: 3.002706
+
+average error of Object 4:  t: 0.019168 R: 1.659655
+=================================================
+
+=======================================================
+Processing Frame: 5
+Update Mask ......
+Update Mask, Done!
+Start Constructing Frame......
+feature detection time: 0.369000
+Constructing Frame, Done!
+Update Current Frame From Last.....
+Update Current Frame, Done!
+Start Tracking ......
+--------------------------------------------
+..........Dealing with Camera Pose..........
+--------------------------------------------
+
+(Camera) inliers number/total numbers: 775/775
+the relative pose error of estimated camera pose, t: 0.014155 R: 0.340349
+--------------------------------------------
+..........Dealing with Objects Now..........
+..........     处理目标的跟踪        ..........
+--------------------------------------------
+Object Tracking ......
+Unique Semantic Label: 0 1 2 3 4
+Current Max_id: (5) motion label: 1 2 3 4 Object Tracking, Done!
+
+Processing Object No.[1]:
+it is 1!
+it is 1!
+
+(Object) inliers number/total numbers: 663/663
+estimated and ground truth object speed: 0.651604km/h 1.249246km/h
+the relative pose error of the object, t: 0.020515 R: 1.253358
+
+Processing Object No.[2]:
+it is 2!
+it is 2!
+
+(Object) inliers number/total numbers: 665/665
+estimated and ground truth object speed: 0.847298km/h 0.339759km/h
+the relative pose error of the object, t: 0.028355 R: 1.241750
+
+Processing Object No.[3]:
+it is 3!
+it is 3!
+
+(Object) inliers number/total numbers: 616/616
+estimated and ground truth object speed: 1.050143km/h 3.949238km/h
+the relative pose error of the object, t: 0.021452 R: 2.822859
+
+Processing Object No.[4]:
+it is 4!
+it is 4!
+
+(Object) inliers number/total numbers: 669/669
+estimated and ground truth object speed: 0.119971km/h 0.677759km/h
+the relative pose error of the object, t: 0.018534 R: 1.632788
+
+Start Renew Frame Information......
+Renew Frame Info, Done!
+map updating time: 6.222000
+Assign To Lastframe ......
+Assign To Lastframe, Done!
+Save Graph Structure ......
+
+==============================================
+the number of static feature tracklets: 1414
+==============================================
+
+Length over 5 (STATIC):::::::::::::::: 818
+
+==============================================
+the number of dynamic feature tracklets: 4007
+==============================================
+
+Length over 5 (DYNAMIC):::::::::::::::: 1870
+Save Graph Structure, Done!
+End Tracking ........
+=================================================
+CAMERA:
+average error (Camera): t: 0.010258 R: 0.279205
+OBJECTS:
+average error (Over All Objects): t: 0.023745 R: 1.929686
+
+average error of Object 1:  t: 0.026698 R: 1.127927
+
+average error of Object 2:  t: 0.023611 R: 1.441900
+
+average error of Object 3:  t: 0.024949 R: 2.967608
+
+average error of Object 4:  t: 0.019043 R: 1.654316
+=================================================
+
+=======================================================
+Processing Frame: 6
+Update Mask ......
+Update Mask, Done!
+Start Constructing Frame......
+feature detection time: 0.306000
+Constructing Frame, Done!
+Update Current Frame From Last.....
+Update Current Frame, Done!
+Start Tracking ......
+--------------------------------------------
+..........Dealing with Camera Pose..........
+--------------------------------------------
+
+(Camera) inliers number/total numbers: 972/972
+the relative pose error of estimated camera pose, t: 0.005216 R: 0.167859
+--------------------------------------------
+..........Dealing with Objects Now..........
+..........     处理目标的跟踪        ..........
+--------------------------------------------
+Object Tracking ......
+Unique Semantic Label: 0 1 2 3 4
+Current Max_id: (5) motion label: 1 2 3 4 Object Tracking, Done!
+
+Processing Object No.[1]:
+it is 1!
+it is 1!
+
+(Object) inliers number/total numbers: 648/648
+estimated and ground truth object speed: 0.879573km/h 1.274495km/h
+the relative pose error of the object, t: 0.028442 R: 1.385928
+
+Processing Object No.[2]:
+it is 2!
+it is 2!
+
+(Object) inliers number/total numbers: 749/749
+estimated and ground truth object speed: 0.637280km/h 0.356695km/h
+the relative pose error of the object, t: 0.022166 R: 1.434223
+
+Processing Object No.[3]:
+it is 3!
+it is 3!
+
+(Object) inliers number/total numbers: 738/738
+estimated and ground truth object speed: 1.180847km/h 3.388331km/h
+the relative pose error of the object, t: 0.021639 R: 2.469738
+
+Processing Object No.[4]:
+it is 4!
+it is 4!
+
+(Object) inliers number/total numbers: 712/712
+estimated and ground truth object speed: 0.110758km/h 1.049374km/h
+the relative pose error of the object, t: 0.020844 R: 1.601078
+
+Start Renew Frame Information......
+Renew Frame Info, Done!
+map updating time: 6.101000
+Assign To Lastframe ......
+Assign To Lastframe, Done!
+Save Graph Structure ......
+
+==============================================
+the number of static feature tracklets: 1653
+==============================================
+
+Length over 5 (STATIC):::::::::::::::: 859
+
+==============================================
+the number of dynamic feature tracklets: 4458
+==============================================
+
+Length over 5 (DYNAMIC):::::::::::::::: 2168
+Save Graph Structure, Done!
+End Tracking ........
+=================================================
+CAMERA:
+average error (Camera): t: 0.009599 R: 0.263930
+OBJECTS:
+average error (Over All Objects): t: 0.023699 R: 1.905197
+
+average error of Object 1:  t: 0.026996 R: 1.174868
+
+average error of Object 2:  t: 0.023377 R: 1.440623
+
+average error of Object 3:  t: 0.024429 R: 2.890591
+
+average error of Object 4:  t: 0.019355 R: 1.645563
+=================================================
+
