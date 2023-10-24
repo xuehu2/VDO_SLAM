@@ -49,6 +49,21 @@ Mina Henein, Jun Zhang, Robert Mahony and Viorela Ila.
 
 
 # 2. Prerequisites
+
+## Successful Build and Run In Ubuntu 18.04
+
+### environment
+
+libeigen3-dev: version is 3.3.1 \
+opencv and opencv_contrib: version is 3.4.0\
+CSparse lib: apt install libsuitesparse-dev
+
+### important
+
+If you run with omd dataset demo provided by the author. **Uncomment line193 in src/Tracking.cc and comment line191**.
+Because omd dataset is use the RGB-D camera, the depth calculate function is not the same as KITTI dataset.
+
+---
 We have tested the library in **Mac OS X 10.14** and **Ubuntu 16.04**, but it should be easy to compile in other platforms. 
 
 ## c++11, gcc and clang

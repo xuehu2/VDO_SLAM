@@ -62,8 +62,7 @@ namespace VDO_SLAM {
         // Preprocess the input and call Track(). Extract features and performs stereo matching.
         cv::Mat GrabImageRGBD(const cv::Mat &imRGB, cv::Mat &imD, const cv::Mat &imFlow, const cv::Mat &maskSEM,
                               const cv::Mat &mTcw_gt, const vector<vector<float> > &vObjPose_gt,
-                              const double &timestamp,
-                              cv::Mat &imTraj, const int &nImage);
+                              const double &timestamp, cv::Mat &imTraj, const int &nImage);
 
         // Sparse Scene Flow Vector
         void GetSceneFlowObj();
@@ -72,16 +71,16 @@ namespace VDO_SLAM {
         std::vector<std::vector<int> > DynObjTracking();
 
         // For flow display on 2d plane
-        void DrawLine(cv::KeyPoint &keys, cv::Point2f &flow, cv::Mat &ref_image, const cv::Scalar &color,
-                      int thickness = 2, int line_type = 1, const cv::Point2i &offset = cv::Point2i(0, 0));
+        void
+        DrawLine(cv::KeyPoint &keys, cv::Point2f &flow, cv::Mat &ref_image, const cv::Scalar &color, int thickness = 2,
+                 int line_type = 1, const cv::Point2i &offset = cv::Point2i(0, 0));
 
         void DrawTransparentSquare(cv::Point center, cv::Vec3b color, int radius, double alpha, cv::Mat &ref_image);
 
         void DrawGridBirdeye(double res_x, double res_z, const BirdEyeVizProperties &viz_props, cv::Mat &ref_image);
 
-        void DrawSparseFlowBirdeye(
-                const std::vector<Eigen::Vector3d> &pts, const std::vector<Eigen::Vector3d> &vel,
-                const cv::Mat &camera, const BirdEyeVizProperties &viz_props, cv::Mat &ref_image);
+        void DrawSparseFlowBirdeye(const std::vector<Eigen::Vector3d> &pts, const std::vector<Eigen::Vector3d> &vel,
+                                   const cv::Mat &camera, const BirdEyeVizProperties &viz_props, cv::Mat &ref_image);
 
         void TransformPointToScaledFrustum(double &pose_x, double &pose_z, const BirdEyeVizProperties &viz_props);
 
@@ -133,9 +132,7 @@ namespace VDO_SLAM {
 
         // Tracking states 跟踪状态
         enum eTrackingState {
-            NO_IMAGES_YET = 0,
-            NOT_INITIALIZED = 1,
-            OK = 2,
+            NO_IMAGES_YET = 0, NOT_INITIALIZED = 1, OK = 2,
         };
 
         eTrackingState mState;  //跟踪状态
@@ -143,9 +140,7 @@ namespace VDO_SLAM {
 
         // Dataset Selection  数据集选择
         enum eDataState {
-            OMD = 1,
-            KITTI = 2,
-            VirtualKITTI = 3,
+            OMD = 1, KITTI = 2, VirtualKITTI = 3,
         };
 
         eDataState mTestData;  //测试数据集选择，yaml文件配置
@@ -162,30 +157,31 @@ namespace VDO_SLAM {
         cv::Mat mImGrayLast;  // ++++++ new added
 
         // new added (Nov 14 2019)
-        cv::Mat mFlowMap, mFlowMapLast;
-        cv::Mat mDepthMap;
-        cv::Mat mSegMap, mSegMapLast;
+        cv::Mat mFlowMap, mFlowMapLast; // 当前的光流图和上一帧的光流图
+        cv::Mat mDepthMap; //深度地图
+        cv::Mat mSegMap, mSegMapLast;   // 当前语义分割图和上一帧语义分割图
 
         // transfer the ground truth to use identity matrix as origin 原点
-        cv::Mat mOriginInv;
+        cv::Mat mOriginInv;      // 起始帧的世界坐标 groundtruth
 
         // 判断是初始帧还是跟踪过程中的帧到帧
-        bool bFrame2Frame, bFirstFrame;  // ++++++ new added
-        // Store temperal matching feature index  存储临时的匹配特征索引
+        bool bFrame2Frame, bFirstFrame;
+        // Store temperal matching feature index
+        // 存储匹配的关键点索引 和 匹配的关键点中内点的索引
         std::vector<int> TemperalMatch, TemperalMatch_subset;  // ++++++ new added
         // 前一帧的特征点，当前帧的特征点
         std::vector<cv::KeyPoint> mvKeysLastFrame, mvKeysCurrentFrame;  // ++++++ new added
 
-        std::vector<cv::KeyPoint> mvTmpObjKeys;
-        std::vector<float> mvTmpObjDepth;
-        std::vector<int> mvTmpSemObjLabel;
-        std::vector<cv::Point2f> mvTmpObjFlowNext;
-        std::vector<cv::KeyPoint> mvTmpObjCorres;
+        std::vector<cv::KeyPoint> mvTmpObjKeys;     // 由光流跟踪的物体的关键点
+        std::vector<float> mvTmpObjDepth;           // 由光流跟踪的物体的关键点的深度
+        std::vector<int> mvTmpSemObjLabel;          // 由光流跟踪的物体的关键点的语义标签
+        std::vector<cv::Point2f> mvTmpObjFlowNext;  //
+        std::vector<cv::KeyPoint> mvTmpObjCorres;   //
 
         // re-projection error   重投影误差
         std::vector<float> repro_e;
 
-        // save current frame ID    保存当前帧的id
+        // save current frame ID   保存当前帧的id
         int f_id;
 
         // save the global Tracking ID    保存全局跟踪id
@@ -195,8 +191,8 @@ namespace VDO_SLAM {
         int StopFrame;
 
         // save optimization decision
-        bool bLocalBatch;
-        bool bGlobalBatch;
+        bool bLocalBatch;   //是否启用局部ba
+        bool bGlobalBatch;  //是否启用全局ba
         // whether use joint optic-flow formulation
         bool bJoint;
 
@@ -204,10 +200,10 @@ namespace VDO_SLAM {
         int nWINDOW_SIZE, nOVERLAP_SIZE;
 
         // Max Tracking Points on Background and Object in each frame
-        int nMaxTrackPointBG, nMaxTrackPointOBJ;
+        int nMaxTrackPointBG, nMaxTrackPointOBJ;    //最大跟踪点数量
 
         // Scene Flow Magnitude and Distribution Threshold
-        float fSFMgThres, fSFDsThres;
+        float fSFMgThres, fSFDsThres;               //场景流阈值
 
         // save timing values
         std::vector<float> all_timing; // 计时器
@@ -260,7 +256,7 @@ namespace VDO_SLAM {
         cv::Mat mVelocity;  // 帧间的变换(速度)
 
         //Color order (true RGB, false BGR, ignored if grayscale)
-        bool mbRGB;
+        bool mbRGB;         //图像格式
     };
 
 } //namespace VDO_SLAM

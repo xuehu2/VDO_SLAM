@@ -30,8 +30,7 @@ endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-include_directories(/usr/local/opencv3.3.1/include/)
-#find_package(OpenCV 3.3 REQUIRED)
+find_package(OpenCV 3 REQUIRED)
 message("${OpenCV_VERSION}")
 #if(NOT OpenCV_FOUND)
 #   find_package(OpenCV 2.4.3 QUIET)
@@ -41,13 +40,14 @@ message("${OpenCV_VERSION}")
 #endif()
 
 find_package(Eigen3 REQUIRED)
-#find_package(CSparse REQUIRED)
+message("${EIGEN3_VERSION}")
+find_package(CSparse REQUIRED)
 
 include_directories(
 ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/include
 ${EIGEN3_INCLUDE_DIR}
-#${CSPARSE_INCLUDE_DIR}
+        ${CSPARSE_INCLUDE_DIR}
 )
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
@@ -70,9 +70,9 @@ src/cvplot/internal.h
 
 target_link_libraries(
 ${PROJECT_NAME}
-#${OpenCV_LIBS}
+        ${OpenCV_LIBS}
 ${EIGEN3_LIBS}
-#${CSPARSE_LIBRARY}
+        ${CSPARSE_LIBRARY}
 # for mac os (default)
 #${PROJECT_SOURCE_DIR}/dependencies/g2o/lib/libg2o.dylib
 # for linux (ubuntu)
