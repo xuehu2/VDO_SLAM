@@ -1,13 +1,13 @@
-echo "Configuring and building g2o ..."
+# echo "Configuring and building g2o ..."
 
-cd dependencies/g2o
+# cd dependencies/g2o
 
-mkdir build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j
+# mkdir build
+# cd build
+# cmake .. -DCMAKE_BUILD_TYPE=Release
+# make -j
 
-cd ../../../
+# cd ../../../
 
 echo "Configuring and building VDO-SLAM ..."
 
@@ -15,3 +15,4 @@ mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j
+

@@ -57,8 +57,13 @@ cv::Mat System::TrackRGBD(const cv::Mat &im, cv::Mat &depthmap, const cv::Mat &f
         cerr << "ERROR: you called TrackRGBD but input sensor was not set to RGBD." << endl;
         exit(-1);
     }
-
-    cv::Mat Tcw = mpTracker->GrabImageRGBD(im,depthmap,flowmap,masksem,mTcw_gt,vObjPose_gt,timestamp,imTraj,nImage);
+    // // add by xuehu
+    // // draw optical flow image
+    // cout << "flowmap row and col:" << flowmap.rows << " " << flowmap.cols
+    //      << endl;
+    cv::Mat Tcw =
+        mpTracker->GrabImageRGBD(im, depthmap, flowmap, masksem, mTcw_gt,
+                                 vObjPose_gt, timestamp, imTraj, nImage);
 
     return Tcw;
 }

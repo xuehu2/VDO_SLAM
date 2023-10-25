@@ -156,26 +156,58 @@ namespace VDO_SLAM {
                 int x = mvKeysSamp[i].pt.x;
                 int y = mvKeysSamp[i].pt.y;
 
+                // 用mask分割出里4个运动物体的信息
                 if (maskSEM.at<int>(y, x) != 0)  // new added in Jun 13 2019
                     continue;
-
+                // 用深度信息一场剔除异常点
                 if (imDepth.at<float>(y, x) > mThDepth || imDepth.at<float>(y, x) <= 0)  // new added in Aug 21 2019
                     continue;
 
                 float flow_xe = imFlow.at<cv::Vec2f>(y, x)[0];
                 float flow_ye = imFlow.at<cv::Vec2f>(y, x)[1];
 
-                // todo： 这里的功能不知到是啥。搞清楚flow_xe的含义是什么。
-                // mvKeySamp是保存的所有的采样特征点，mvStatKeysTmp是保存的静态点，所以flow_xe and flow_ye是用来判断对应像素是否有移动的。
+                // 光流信息去除帧间运动超过了相机观测的范围的点
+                // mvKeySamp是保存的所有的采样特征点，mvStatKeysTmp是保存的静态点，所以flow_xe
+                // and flow_ye是用来判断对应像素是否有移动的。
                 if (flow_xe != 0 && flow_ye != 0) {
-                    if (mvKeysSamp[i].pt.x + flow_xe < imGray.cols && mvKeysSamp[i].pt.y + flow_ye < imGray.rows &&
-                        mvKeysSamp[i].pt.x + flow_xe > 0 && mvKeysSamp[i].pt.y + flow_ye > 0) {
-                        mvStatKeysTmp.push_back(mvKeysSamp[i]);             // 需要跟踪的静态的关键点
-                        mvCorres.push_back(cv::KeyPoint(mvKeysSamp[i].pt.x + flow_xe, mvKeysSamp[i].pt.y + flow_ye, 0, 0, 0, mvKeysSamp[i].octave, -1));// 下一时刻的关联的关键点
-                        mvFlowNext.push_back(cv::Point2f(flow_xe, flow_ye));//当前时刻到下一时刻关键点的移动
-                    }
+                  if (mvKeysSamp[i].pt.x + flow_xe < imGray.cols &&
+                      mvKeysSamp[i].pt.y + flow_ye < imGray.rows &&
+                      mvKeysSamp[i].pt.x + flow_xe > 0 &&
+                      mvKeysSamp[i].pt.y + flow_ye > 0) {
+                    mvStatKeysTmp.push_back(
+                        mvKeysSamp[i]); // 需要跟踪的静态的关键点
+                    mvCorres.push_back(cv::KeyPoint(
+                        mvKeysSamp[i].pt.x + flow_xe,
+                        mvKeysSamp[i].pt.y + flow_ye, 0, 0, 0,
+                        mvKeysSamp[i].octave, -1)); // 下一时刻的关联的关键点
+                    mvFlowNext.push_back(cv::Point2f(
+                        flow_xe, flow_ye)); //当前时刻到下一时刻关键点的移动
+                  } else {
+                    // cout << "flow_xe:" << flow_xe << "\tflow_ye:" << flow_ye
+                    //      << "\tx:" << mvKeysSamp[i].pt.x
+                    //      << "  y:" << mvKeysSamp[i].pt.y
+                    //      << "\tcols:" << imGray.cols << "  rows:" <<
+                    //      imGray.rows
+                    //      << endl;
+                  }
                 }
             }
+
+            // add by xuehu
+            cv::Mat img_show_1, img_show_2, img_show_3;
+            cv::drawKeypoints(imGray, mvKeysSamp, img_show_1,
+                              cv::Scalar::all(-1),
+                              cv::DrawMatchesFlags::DEFAULT);
+            cv::imshow("img_show_1", img_show_1);
+            cv::drawKeypoints(imGray, mvStatKeysTmp, img_show_2,
+                              cv::Scalar::all(-1),
+                              cv::DrawMatchesFlags::DEFAULT);
+            cv::imshow("img_show_2", img_show_2);
+            // cv::drawKeypoints(imGray, mvCorres, img_show_3,
+            // cv::Scalar::all(-1),
+            //                   cv::DrawMatchesFlags::DEFAULT);
+            // cv::imshow("img_show_3", img_show_3);
+            cv::waitKey(0);
         }
 
 
@@ -218,24 +250,31 @@ namespace VDO_SLAM {
                 if (maskSEM.at<int>(i, j) != 0 
                  && imDepth.at<float>(i, j) < mThDepthObj
                  && imDepth.at<float>(i, j) > 0) {
-                    /// get flow  光流信息
-                    const float flow_x = imFlow.at<cv::Vec2f>(i, j)[0];
-                    const float flow_y = imFlow.at<cv::Vec2f>(i, j)[1];
-                    /// 判断结合了光流信息后的坐标是否在图像的有效区域内
-                    if (j + flow_x < imGray.cols && j + flow_x > 0 && i + flow_y < imGray.rows && i + flow_y > 0) {
-                        // save correspondences
-                        mvObjFlowNext.push_back(cv::Point2f(flow_x, flow_y));
-                        mvObjCorres.push_back(cv::KeyPoint(j + flow_x, i + flow_y, 0, 0, 0, -1));
-                        // save pixel location
-                        mvObjKeys.push_back(cv::KeyPoint(j, i, 0, 0, 0, -1));
-                        // save depth
-                        mvObjDepth.push_back(imDepth.at<float>(i, j));
-                        // save label
-                        vSemObjLabel.push_back(maskSEM.at<int>(i, j));
+                  // get flow  光流信息
+                  const float flow_x = imFlow.at<cv::Vec2f>(i, j)[0];
+                  const float flow_y = imFlow.at<cv::Vec2f>(i, j)[1];
+                  // 判断结合了光流信息后的坐标是否在图像的有效区域内
+                  if (j + flow_x < imGray.cols && j + flow_x > 0 &&
+                      i + flow_y < imGray.rows && i + flow_y > 0) {
+                    // save correspondences
+                    mvObjFlowNext.push_back(cv::Point2f(flow_x, flow_y));
+                    mvObjCorres.push_back(
+                        cv::KeyPoint(j + flow_x, i + flow_y, 0, 0, 0, -1));
+                    // save pixel location
+                    mvObjKeys.push_back(cv::KeyPoint(j, i, 0, 0, 0, -1));
+                    // save depth
+                    mvObjDepth.push_back(imDepth.at<float>(i, j));
+                    // save label
+                    vSemObjLabel.push_back(maskSEM.at<int>(i, j));
                     }
                 }
             }
         }
+        cv::Mat outimg;
+        cv::drawKeypoints(imGray, mvObjKeys, outimg, cv::Scalar::all(-1),
+                          cv::DrawMatchesFlags::DEFAULT);
+        cv::imshow("outimg", outimg);
+        cv::waitKey(0);
 
         // ---------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------

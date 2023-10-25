@@ -260,12 +260,11 @@ namespace VDO_SLAM {
                       mK, mDistCoef, mbf, mThDepth, mThDepthObj, nUseSampleFea);
 
         // ----add by xuehu
-//        cv::Mat outImg;
-//        cv::drawKeypoints(mImGray, mCurrentFrame.mvObjKeys,outImg);
-//        cv::imshow("img", outImg);
-//        cv::waitKey(0);
-//        cv::destroyAllWindows();
-        cout << mCurrentFrame.mvObjKeys.size() << " " << mCurrentFrame.mvStatKeysTmp.size() << " " << endl;
+        //        cv::Mat outImg;
+        //        cv::drawKeypoints(mImGray, mCurrentFrame.mvObjKeys,outImg);
+        //        cv::imshow("img", outImg);
+        //        cv::waitKey(0);
+        //        cv::destroyAllWindows();
         // ---------------------------------------------------------------------------------------
         // +++++++++++++++++++++++++ For sampled features
         // ++++++++++++++++++++++++++++++++++++++++
