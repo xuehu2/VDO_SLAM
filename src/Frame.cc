@@ -103,7 +103,7 @@ namespace VDO_SLAM {
         // double fea_det_time;
         // s_1 = clock();
         // ORB extraction 提取ORB特征点
-        ExtractORB(0, imGray); //提取左图特征点
+        ExtractORB(0, imGray); //提取左图特征点到mvKeys
         // e_1 = clock();
         // fea_det_time = (double)(e_1-s_1)/CLOCKS_PER_SEC*1000;
         // cout << "feature detection time: " << fea_det_time << endl;
@@ -142,11 +142,11 @@ namespace VDO_SLAM {
             }
         } else {
             // // // Option II: ~~~~~~~ use sampled features ~~~~~~~~~~ // // //
-            /// 提取随机采样点作为特征点
+            // 提取随机采样点作为特征点
             clock_t s_1, e_1;
             double fea_det_time;
             s_1 = clock();
-            std::vector<cv::KeyPoint> mvKeysSamp = SampleKeyPoints(imGray.rows, imGray.cols);
+            std::vector<cv::KeyPoint> mvKeysSamp = SampleKeyPoints(imGray.rows, imGray.cols); // 提取随机采样点
             e_1 = clock();
             fea_det_time = (double) (e_1 - s_1) / CLOCKS_PER_SEC * 1000;
             std::cout << "feature detection time: " << fea_det_time << std::endl;
@@ -165,19 +165,22 @@ namespace VDO_SLAM {
                 float flow_ye = imFlow.at<cv::Vec2f>(y, x)[1];
 
 
+                // mvKeySamp是保存的所有的采样特征点，mvStatKeysTmp是保存的静态点，所以flow_xe and flow_ye是用来判断对应像素是否有移动的。
                 if (flow_xe != 0 && flow_ye != 0) {
                     if (mvKeysSamp[i].pt.x + flow_xe < imGray.cols && mvKeysSamp[i].pt.y + flow_ye < imGray.rows &&
                         mvKeysSamp[i].pt.x + flow_xe > 0 && mvKeysSamp[i].pt.y + flow_ye > 0) {
-                        mvStatKeysTmp.push_back(mvKeysSamp[i]);
+                        mvStatKeysTmp.push_back(mvKeysSamp[i]);// 跟踪的关键点
                         mvCorres.push_back(
                                 cv::KeyPoint(mvKeysSamp[i].pt.x + flow_xe, mvKeysSamp[i].pt.y + flow_ye, 0, 0, 0,
-                                             mvKeysSamp[i].octave, -1));
-                        mvFlowNext.push_back(cv::Point2f(flow_xe, flow_ye));
+                                             mvKeysSamp[i].octave, -1));// 下一时刻的关联的关键点
+                        mvFlowNext.push_back(cv::Point2f(flow_xe, flow_ye));//当前时刻到下一时刻关键点的移动
 
                     }
                 }
+
             }
         }
+
 
         // ---------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------

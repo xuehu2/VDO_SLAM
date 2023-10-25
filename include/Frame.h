@@ -158,7 +158,7 @@ namespace VDO_SLAM {
         std::vector<int> vSemObjLabel;
 
         // temporal saved
-        std::vector<cv::KeyPoint> mvStatKeysTmp;   //当前帧通过特征提取或随机采样得到的特征点
+        std::vector<cv::KeyPoint> mvStatKeysTmp;   // 当前帧通过特征提取或随机采样得到的特征点，只有静态信息
         std::vector<float> mvStatDepthTmp;
         std::vector<cv::Mat> mvStat3DPointTmp;
         std::vector<int> vSemLabelTmp;
@@ -196,9 +196,9 @@ namespace VDO_SLAM {
 
         // for initializing motion
         cv::Mat mInitModel;
-
+        // 下一时刻的关联的关键点
         std::vector<cv::KeyPoint> mvCorres; // correspondence  已知当前帧中的关键点和光流信息，可以算出下一帧中的匹配点坐标
-        std::vector<cv::Point2f> mvFlow, mvFlowNext; // optical flow
+        std::vector<cv::Point2f> mvFlow, mvFlowNext; // optical flow//当前时刻到下一时刻关键点的光流移动
         // std::vector<int> vCorSta; // the status of correspondence, -1 (outliers) 1 (has correspondence)
 
 
