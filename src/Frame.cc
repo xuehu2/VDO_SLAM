@@ -177,7 +177,6 @@ namespace VDO_SLAM {
 
                     }
                 }
-
             }
         }
 
