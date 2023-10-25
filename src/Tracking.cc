@@ -3307,7 +3307,7 @@ namespace VDO_SLAM {
             // end of recovery
         }
 
-        // // === verify the updated labels ===
+        // === verify the updated labels ===
         // cv::Mat imgLabel(mImGray.rows,mImGray.cols,CV_8UC3); // for display
         // for (int i = 0; i < mSegMap.rows; ++i)
         // {

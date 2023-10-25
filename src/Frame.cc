@@ -114,7 +114,7 @@ namespace VDO_SLAM {
             return;
 
         if (UseSampleFea == 0) {
-            // // // Option I: ~~~~~~~ use detected features ~~~~~~~~~~ // // //
+            // Option I: ~~~~~~~ use detected features ~~~~~~~~~~ 
             /// 遍历mvKeys，
             for (int i = 0; i < mvKeys.size(); ++i) {
                 int x = mvKeys[i].pt.x;
@@ -125,14 +125,15 @@ namespace VDO_SLAM {
                 /// 深度值非法
                 if (imDepth.at<float>(y, x) > mThDepth || imDepth.at<float>(y, x) <= 0)  // new added in Aug 21 2019
                     continue;
-                /// 光流的坐标
+                /// 光流矢量。表示相邻帧间点的位移
                 float flow_xe = imFlow.at<cv::Vec2f>(y, x)[0];
                 float flow_ye = imFlow.at<cv::Vec2f>(y, x)[1];
 
-                /// todo： 这里的功能不知到是啥。搞清楚flow_xe的含义是什么。
                 if (flow_xe != 0 && flow_ye != 0) {
-                    if (mvKeys[i].pt.x + flow_xe < imGray.cols && mvKeys[i].pt.y + flow_ye < imGray.rows &&
-                        mvKeys[i].pt.x < imGray.cols && mvKeys[i].pt.y < imGray.rows) {
+                    if (mvKeys[i].pt.x + flow_xe < imGray.cols 
+                    && mvKeys[i].pt.y + flow_ye < imGray.rows
+                    && mvKeys[i].pt.x < imGray.cols
+                    && mvKeys[i].pt.y < imGray.rows) {
                         mvStatKeysTmp.push_back(mvKeys[i]);
                         mvCorres.push_back(cv::KeyPoint(mvKeys[i].pt.x + flow_xe, mvKeys[i].pt.y + flow_ye, 0, 0, 0,
                                                         mvKeys[i].octave, -1));
@@ -141,12 +142,12 @@ namespace VDO_SLAM {
                 }
             }
         } else {
-            // // // Option II: ~~~~~~~ use sampled features ~~~~~~~~~~ // // //
+            // Option II: ~~~~~~~ use sampled features ~~~~~~~~~~ 
             // 提取随机采样点作为特征点
             clock_t s_1, e_1;
             double fea_det_time;
             s_1 = clock();
-            std::vector<cv::KeyPoint> mvKeysSamp = SampleKeyPoints(imGray.rows, imGray.cols); // 提取随机采样点
+            std::vector<cv::KeyPoint> mvKeysSamp = SampleKeyPoints(imGray.rows, imGray.cols); // 提取随机采样关键点
             e_1 = clock();
             fea_det_time = (double) (e_1 - s_1) / CLOCKS_PER_SEC * 1000;
             std::cout << "feature detection time: " << fea_det_time << std::endl;
@@ -164,17 +165,14 @@ namespace VDO_SLAM {
                 float flow_xe = imFlow.at<cv::Vec2f>(y, x)[0];
                 float flow_ye = imFlow.at<cv::Vec2f>(y, x)[1];
 
-
+                // todo： 这里的功能不知到是啥。搞清楚flow_xe的含义是什么。
                 // mvKeySamp是保存的所有的采样特征点，mvStatKeysTmp是保存的静态点，所以flow_xe and flow_ye是用来判断对应像素是否有移动的。
                 if (flow_xe != 0 && flow_ye != 0) {
                     if (mvKeysSamp[i].pt.x + flow_xe < imGray.cols && mvKeysSamp[i].pt.y + flow_ye < imGray.rows &&
                         mvKeysSamp[i].pt.x + flow_xe > 0 && mvKeysSamp[i].pt.y + flow_ye > 0) {
-                        mvStatKeysTmp.push_back(mvKeysSamp[i]);// 跟踪的关键点
-                        mvCorres.push_back(
-                                cv::KeyPoint(mvKeysSamp[i].pt.x + flow_xe, mvKeysSamp[i].pt.y + flow_ye, 0, 0, 0,
-                                             mvKeysSamp[i].octave, -1));// 下一时刻的关联的关键点
+                        mvStatKeysTmp.push_back(mvKeysSamp[i]);             // 需要跟踪的静态的关键点
+                        mvCorres.push_back(cv::KeyPoint(mvKeysSamp[i].pt.x + flow_xe, mvKeysSamp[i].pt.y + flow_ye, 0, 0, 0, mvKeysSamp[i].octave, -1));// 下一时刻的关联的关键点
                         mvFlowNext.push_back(cv::Point2f(flow_xe, flow_ye));//当前时刻到下一时刻关键点的移动
-
                     }
                 }
             }
@@ -217,8 +215,9 @@ namespace VDO_SLAM {
 
                 // check ground truth motion mask
                 /// mask显示不是背景 && 深度信息小于阈值 && 深度信息大于0
-                if (maskSEM.at<int>(i, j) != 0 && imDepth.at<float>(i, j) < mThDepthObj &&
-                    imDepth.at<float>(i, j) > 0) {
+                if (maskSEM.at<int>(i, j) != 0 
+                 && imDepth.at<float>(i, j) < mThDepthObj
+                 && imDepth.at<float>(i, j) > 0) {
                     /// get flow  光流信息
                     const float flow_x = imFlow.at<cv::Vec2f>(i, j)[0];
                     const float flow_y = imFlow.at<cv::Vec2f>(i, j)[1];

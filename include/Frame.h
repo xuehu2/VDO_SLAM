@@ -198,7 +198,7 @@ namespace VDO_SLAM {
         cv::Mat mInitModel;
         // 下一时刻的关联的关键点
         std::vector<cv::KeyPoint> mvCorres; // correspondence  已知当前帧中的关键点和光流信息，可以算出下一帧中的匹配点坐标
-        std::vector<cv::Point2f> mvFlow, mvFlowNext; // optical flow//当前时刻到下一时刻关键点的光流移动
+        std::vector<cv::Point2f> mvFlowNext; // optical flow  当前时刻到下一时刻关键点的光流移动
         // std::vector<int> vCorSta; // the status of correspondence, -1 (outliers) 1 (has correspondence)
 
 
